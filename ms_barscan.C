@@ -11,6 +11,20 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace MBS
 {
@@ -90,8 +104,8 @@ double pct(std::vector<double> v, double p)
 struct Rec { int n; double span, R, rms; bool okfit; };
 }  // namespace MBS
 
-void ms_barscan(const char *i91 = "island91_frames_production_v6.root",
-                const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void ms_barscan(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
+                const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                 const char *ver = "v6")
 {
   using namespace MBS;
@@ -168,7 +182,7 @@ void ms_barscan(const char *i91 = "island91_frames_production_v6.root",
       rec[1].push_back({(int) X.size(), rhi - rlo, F.R, F.rms * 1e4, F.ok});
     }
   }
-  FILE *fo = fopen(Form("ms_barscan_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_barscan_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);

@@ -38,6 +38,20 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace MTK
 {
@@ -320,8 +334,8 @@ std::vector<Trk> hunt(const std::vector<Cl> &C, double cohband = 8, double cohsl
 }
 }  // namespace MTK
 
-void missed_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
-                   const char *i91 = "island91_frames_production_v53.root",
+void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v53.root",
                    const char *ver = "v53f", const char *vtag = "v5.3",
                    int nsimev = 50)
 {
@@ -478,7 +492,7 @@ void missed_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_nt
   }
 
   // ---------- ledger ----------
-  FILE *fo = fopen(Form("missed_tracks_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/missed_tracks_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -577,7 +591,7 @@ void missed_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_nt
     tx.DrawLatex(0.06, 0.22, "out-of-time finds = genuine tracks an in-time tracker skips by design,");
     tx.DrawLatex(0.06, 0.16, "but real charge that cluster-level ML must classify.");
   }
-  cv->SaveAs(Form("../sim_validation_plots/missed_tracks_%s.png", ver));
+  cv->SaveAs(Form("%s/missed_tracks_%s.png", VDIR(), ver));
   printf("wrote ../sim_validation_plots/missed_tracks_%s.png + missed_tracks_%s.txt\n", ver, ver);
 }
 
@@ -588,8 +602,8 @@ void missed_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_nt
 // filter) — removing the tracker-vs-truth grouping asymmetry of ms_real.
 // Real rates quoted on COMPLETE events (cluster-tbin p99.9 > 950) per the
 // dual-reference convention; sim frames are always complete.
-void mt_cluscmp(const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *i91 = "island91_frames_production_v6.root",
+void mt_cluscmp(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
                 const char *ver = "v6", int nsimev = 50)
 {
   using namespace MTK;
@@ -664,7 +678,7 @@ void mt_cluscmp(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     hT[s] = new TH1D(Form("hcT%d", s), ";median drift-time bin of the circle;circles / event / bin", 40, 0, 1000);
   }
   // per-track dump (v5.5 figure work): side, event, n, R, rms, medtb
-  FILE *fdump = fopen(Form("ms_cluscmp_%s_tracks.txt", ver), "w");
+  FILE *fdump = fopen(Form("%s/ledgers/ms_cluscmp_%s_tracks.txt", VDIR(), ver), "w");
   fprintf(fdump, "# side(0=real,1=sim) event ncl R_cm rms_cm medtb\n");
   for (int s = 0; s < 2; ++s)
   {
@@ -694,7 +708,7 @@ void mt_cluscmp(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     std::sort(v.begin(), v.end());
     return v[v.size() / 2];
   };
-  FILE *fo = fopen(Form("ms_cluscmp_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_cluscmp_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -744,7 +758,7 @@ void mt_cluscmp(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     for (int s = 0; s < 2; ++s) { hn[s]->Write(); hr[s]->Write(); hR[s]->Write(); hT[s]->Write(); }
     fh.Close();
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_cluscmp_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_cluscmp_%s.png", VDIR(), ver));
   printf("wrote ms_cluscmp_%s outputs\n", ver);
 }
 
@@ -755,7 +769,7 @@ void mt_cluscmp(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
 // (band 5 cm, slope 6 cm per pseudo-layer). Reports the from-first-
 // principles findable track-class rate per collision, against the direct
 // truth-group count under the same acceptance.
-void mt_g4scan(const char *g4pat = "../P5/PP_g4hit_%d.root", int nfiles = 1,
+void mt_g4scan(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int nfiles = 1,
                const char *ver = "v6")
 {
   using namespace MTK;
@@ -826,7 +840,7 @@ void mt_g4scan(const char *g4pat = "../P5/PP_g4hit_%d.root", int nfiles = 1,
     std::sort(v.begin(), v.end());
     return v[v.size() / 2];
   };
-  FILE *fo = fopen(Form("ms_g4scan_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_g4scan_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -852,7 +866,7 @@ void mt_g4scan(const char *g4pat = "../P5/PP_g4hit_%d.root", int nfiles = 1,
 // same acceptance, tbin coherence. Pixel positions are pad centers
 // (no charge weighting), so the per-point RMS is expected slightly above
 // the cluster level.
-void mt_pixscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void mt_pixscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                 int nev = 25, const char *ver = "v6")
 {
   using namespace MTK;
@@ -929,7 +943,7 @@ void mt_pixscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     std::sort(v.begin(), v.end());
     return v[v.size() / 2];
   };
-  FILE *fo = fopen(Form("ms_pixscan_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_pixscan_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -984,7 +998,7 @@ void mt_pixscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     tx.DrawLatex(0.06, 0.33, "tracks are findable straight from raw pixels when");
     tx.DrawLatex(0.06, 0.26, "the (x, y) circle and tbin-line are demanded JOINTLY");
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_pixscan_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_pixscan_%s.png", VDIR(), ver));
   printf("wrote ms_pixscan_%s outputs\n", ver);
 }
 
@@ -1007,8 +1021,8 @@ void mt_pixscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
 // Scan restricted to the post-cleaning gates; the 0.30 cm cleaning itself is
 // fixed (rms variants above 0.30 would be no-ops by construction). Looser-
 // than-nominal points carry a second-order claiming approximation (declared).
-void mt_rocscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *i91 = "island91_frames_production_v6.root",
+void mt_rocscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
                 const char *ver = "v6", int nsimev = 50)
 {
   using namespace MTK;
@@ -1279,7 +1293,7 @@ void mt_rocscan(const char *realf = "../clusters_seeds_island_79507-0.root_ntupl
     return r.n >= v.n && r.nlay >= v.nlay && r.span >= v.span && r.maxgap <= v.gap &&
            r.rms <= v.rms && r.R >= v.rmin && r.R < 2e4;
   };
-  FILE *fo = fopen(Form("ms_rocscan_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_rocscan_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);

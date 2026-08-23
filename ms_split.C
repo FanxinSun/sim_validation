@@ -34,6 +34,20 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace MSD
 {
@@ -142,8 +156,8 @@ bool tangentAtR(const Fit &F, double r0, double hx, double hy,
 // 3-sigma-clipped core sigma + clipped-tail fraction (separates hadronic-kink
 // tails from the Gaussian MS core) and stat errors sigma/sqrt(2N). Writes
 // under its own tag — the sealed v53 outputs remain era records.
-void ms_split(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
-               const char *i91 = "island91_frames_production_v6.root",
+void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
+               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
                const char *ver = "v6", const char *vtag = "V6",
                double r0 = 35.0)
 {
@@ -285,7 +299,7 @@ void ms_split(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
   }
 
   // ---------- summary ----------
-  FILE *fo = fopen(Form("ms_split_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_split_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -377,7 +391,7 @@ void ms_split(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
     tx.DrawLatex(0.06, 0.21, "     comparable to the measurement term only below ~0.5-1 GeV");
     tx.DrawLatex(0.06, 0.10, "gas: Ar75:CF4-20:iso-5 (from sphenix_p5.gdml), X_{0} = 112 m");
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_split_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_split_%s.png", VDIR(), ver));
   printf("wrote ../sim_validation_plots/ms_split_%s.png + ms_split_%s.txt\n", ver, ver);
 }
 
@@ -394,7 +408,7 @@ void ms_split(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
 // ms_split() before the rename. Highland theta0 is quoted as an ORDER scale only; the
 // quantitative checks are the 1/p scaling and the split stability.
 // Track sample: fixed full-crosser selection for all r0 (apples-to-apples).
-void ms_r0scan(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
+void ms_r0scan(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
                 const char *ver = "v6", const char *vtag = "V6")
 {
   using namespace MSD;
@@ -519,7 +533,7 @@ void ms_r0scan(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
     }
   }
 
-  FILE *fo = fopen(Form("ms_r0scan_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/ms_r0scan_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -584,6 +598,6 @@ void ms_r0scan(int ng4 = 10, const char *g4pat = "../P5/PP_g4hit_%d.root",
   tx.DrawLatex(0.14, 0.35, Form("cross-window ratio at each r_{0}: %.2f / %.2f / %.2f  (Highland %.2f)",
                                 sdat[0][0] / std::max(1e-9, sdat[1][0]), sdat[0][1] / std::max(1e-9, sdat[1][1]),
                                 sdat[0][2] / std::max(1e-9, sdat[1][2]), qm[0] / std::max(1e-9, qm[1])));
-  cv->SaveAs(Form("../sim_validation_plots/ms_r0scan_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_r0scan_%s.png", VDIR(), ver));
   printf("wrote ../sim_validation_plots/ms_r0scan_%s.png + ms_r0scan_%s.txt\n", ver, ver);
 }

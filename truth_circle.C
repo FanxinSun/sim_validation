@@ -43,6 +43,20 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace TCIRC
 {
@@ -130,8 +144,8 @@ double wrapphi(double d)
 }  // namespace TCIRC
 
 void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
-                  const char *g4pat = "../P5/PP_g4hit_%d.root",
-                  const char *i91 = "island91_frames_production_v53.root",
+                  const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
+                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v53.root",
                   const char *ver = "v53", const char *vtag = "v5.3")
 {
   using namespace TCIRC;
@@ -140,7 +154,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
   const double RSEL_LO = 101, RSEL_HI = 137;                   // fitted-R window ~ pT 0.45-0.55
   double geoR[55]; int ngeo = 0;
   {
-    FILE *ft = fopen("tpc_geom_table.txt", "r");
+    FILE *ft = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
     if (!ft) { printf("no tpc_geom_table.txt (run from island_post/)\n"); return; }
     char line[512];
     while (fgets(line, sizeof line, ft))
@@ -332,7 +346,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
   };
   double sag = sagitta(20.0, 78.0);              // full gas volume (truth hits)
   double sagrow = sagitta(geoR[7], geoR[54]);    // pad rows L7-L54 (clusters)
-  FILE *fo = fopen(Form("truth_circle_%s.txt", ver), "w");
+  FILE *fo = fopen(Form("%s/ledgers/truth_circle_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
@@ -453,6 +467,6 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
     lg->Draw();
   }
 
-  cv->SaveAs(Form("../sim_validation_plots/truth_circle_%s.png", ver));
+  cv->SaveAs(Form("%s/truth_circle_%s.png", VDIR(), ver));
   printf("wrote ../sim_validation_plots/truth_circle_%s.png + truth_circle_%s.txt\n", ver, ver);
 }

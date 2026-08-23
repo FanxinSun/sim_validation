@@ -30,6 +30,20 @@
 #include <set>
 #include <vector>
 #include <algorithm>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace MFC
 {
@@ -162,7 +176,7 @@ void stats(const std::vector<double> &v, double &sig, double &err, double &core)
 }
 bool loadRows(double rowR[55])
 {
-  FILE *fp = fopen("tpc_geom_table.txt", "r");
+  FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
   if (!fp) { printf("no tpc_geom_table.txt\n"); return false; }
   char line[512];
   while (fgets(line, sizeof line, fp))
@@ -174,14 +188,14 @@ bool loadRows(double rowR[55])
   fclose(fp);
   return true;
 }
-FILE *openLedger(const char *ver) { return fopen(Form("ms_fieldcmp_%s.txt", ver), "a"); }
+FILE *openLedger(const char *ver) { return fopen(Form("%s/ledgers/ms_fieldcmp_%s.txt", VDIR(), ver), "a"); }
 const int CIDE = kBlue + 1, CDIS = kRed + 1;    // ideal solid blue, field-on dashed red
 }  // namespace MFC
 
 // ---------------------------------------------------------------------------
 // CLUSTER LEVEL: island91 ideal vs field-on, truth-grouped tracks.
-void fc_clusters(const char *ideal = "island91_frames_production_v6ideal.root",
-                 const char *dist = "island91_frames_production_v6.root",
+void fc_clusters(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6ideal.root",
+                 const char *dist = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
                  const char *ver = "v6")
 {
   using namespace MFC;
@@ -360,15 +374,15 @@ void fc_clusters(const char *ideal = "island91_frames_production_v6ideal.root",
     tx.DrawLatex(0.14, 0.74, "trajectories point at the beamline;");
     tx.DrawLatex(0.14, 0.68, "their displaced images do not");
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_fieldcmp_clusters_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_fieldcmp_clusters_%s.png", VDIR(), ver));
   printf("wrote ms_fieldcmp_clusters_%s.png\n", ver);
 }
 
 // ---------------------------------------------------------------------------
 // PIXEL LEVEL: digi ideal vs field-on, per-pixel-truth-grouped tracks;
 // whole-track (global) vs 4-adjacent-row local (short-sagitta) fits.
-void fc_pixels(const char *ideal = "digi_frames_production_v6ideal.root",
-               const char *dist = "digi_frames_production_v6.root",
+void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6ideal.root",
+               const char *dist = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root",
                int nsim = 60, const char *ver = "v6")
 {
   using namespace MFC;
@@ -496,6 +510,6 @@ void fc_pixels(const char *ideal = "digi_frames_production_v6ideal.root",
       tx.DrawLatex(0.44, 0.59, "local fit is field-blind by construction");
     }
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_fieldcmp_pixels_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_fieldcmp_pixels_%s.png", VDIR(), ver));
   printf("wrote ms_fieldcmp_pixels_%s.png\n", ver);
 }

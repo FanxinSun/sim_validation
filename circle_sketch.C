@@ -14,6 +14,20 @@
 #include <TLatex.h>
 #include <TStyle.h>
 #include <cmath>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 void circle_sketch()
 {
@@ -95,6 +109,6 @@ void circle_sketch()
   n.DrawLatex(38, -9.0, "3)  chord of that piece: c = 58.8 cm (#approx 78#minus20)");
   n.DrawLatex(38, -12.5, "4)  sagitta s = c^{2}/(8R) = 58.8^{2}/(8#times119) = 3.6 cm");
 
-  cv->SaveAs("../sim_validation_plots/circle_geometry_sketch.png");
+  cv->SaveAs(Form("%s/circle_geometry_sketch.png", VDIR()));
   printf("wrote ../sim_validation_plots/circle_geometry_sketch.png\n");
 }

@@ -44,6 +44,20 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <TSystem.h>
+#include <TString.h>
+// repo dir of THIS macro, resolved absolute at first use: outputs land beside
+// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+// from ANY cwd against the fixed pipeline data area (absolute input defaults).
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace MNF
 {
@@ -253,15 +267,15 @@ int realPixGroups(const char *realf, std::vector<Grp> &px)
 
 FILE *openLedger(const char *ver)
 {
-  return fopen(Form("ms_nofinder_%s.txt", ver), "a");
+  return fopen(Form("%s/ledgers/ms_nofinder_%s.txt", VDIR(), ver), "a");
 }
 }  // namespace MNF
 
 // ---------------------------------------------------------------------------
 // 1. HIT LEVEL, no finder: sim truth-grouped ntp_g4hit vs real tracker-grouped
 //    ntp_hit pixels, same canvas (log-x RMS: the two are 40x apart).
-void nf_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int nfiles = 10,
-             const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int nfiles = 10,
+             const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
              const char *ver = "v6")
 {
   using namespace MNF;
@@ -355,15 +369,15 @@ void nf_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int nfiles = 10,
   tx.DrawLatex(0.14, 0.66, Form("N tracks: real %ld, sim %ld", rgrp, sgrp));
   tx.DrawLatex(0.14, 0.61, "same fitter, same bar; no outlier removal, no p_{T} windows");
   tx.DrawLatex(0.14, 0.56, "the gap IS the detector: diffusion + pad/tbin quantization");
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_hits_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_hits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_hits_%s.png\n", ver);
 }
 
 // ---------------------------------------------------------------------------
 // 2. CLUSTER LEVEL, no finder: sim island91 ntp_cluster truth-grouped vs real
 //    ntp_clus_trk tracker-grouped, same canvas.
-void nf_clusters(const char *i91 = "island91_frames_production_v6.root",
-                 const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_clusters(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
+                 const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                  const char *ver = "v6")
 {
   using namespace MNF;
@@ -464,14 +478,14 @@ void nf_clusters(const char *i91 = "island91_frames_production_v6.root",
   tx.DrawLatex(0.40, 0.66, Form("N tracks: real %ld, sim %ld; data/MC %.2f",
                                 ngrp[0], ngrp[1], med(rms[1]) > 0 ? med(rms[0]) / med(rms[1]) : 0));
   tx.DrawLatex(0.40, 0.61, "same fitter, same bar; no outlier removal, no p_{T} windows");
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_clusters_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_clusters_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_clusters_%s.png\n", ver);
 }
 
 // ---------------------------------------------------------------------------
 // 3. TRACK LEVEL, no finder: real-only (local sim reco yields no tracks).
 //    ntp_clus_trk fitted; event display + statistics on one canvas.
-void nf_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                const char *ver = "v6", int showev = 7)
 {
   using namespace MNF;
@@ -590,7 +604,7 @@ void nf_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_ntupli
     tx.DrawLatex(0.48, 0.58, "sim skipped: no tracker output in sim");
     tx.DrawLatex(0.48, 0.53, "(cluster-level mirror = nf_clusters)");
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_tracks_real_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_tracks_real_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_tracks_real_%s.png\n", ver);
 }
 
@@ -607,8 +621,8 @@ void nf_tracks(const char *realf = "../clusters_seeds_island_79507-0.root_ntupli
 //    windows by FITTED whole-track curvature (no truth exists); NO kink veto
 //    (pixel-level fit noise is tens of mrad — the veto would clip the
 //    distribution itself); sigma about the sample mean, 3sigma-clipped core.
-void nf_ms_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
-                const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int ng4 = 10,
+                const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                 const char *ver = "v6")
 {
   using namespace MNF;
@@ -868,7 +882,7 @@ void nf_ms_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
     tx.DrawLatex(0.13, 0.57, Form("adopted border 35: #sigma = %.3f (record 1.365)", ss[0][0]));
     tx.DrawLatex(0.13, 0.51, "NOTE x-scale: 12x zoom vs left panel");
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_mshits_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_mshits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_mshits_%s.png\n", ver);
 }
 
@@ -886,14 +900,14 @@ void nf_ms_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
 //    the GLOBAL nf_hits bar, then per-window >=3 distinct rows, n>=5.
 //    Expected sim wall: G4 ~1 cm stepping -> 3-6 truth points/window, many
 //    unfittable; truth local RMS = the um floor (locally exact arc).
-void nf_sag_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
-                 const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int ng4 = 10,
+                 const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                  const char *ver = "v6")
 {
   using namespace MNF;
   double rowR[55];
   {
-    FILE *fp = fopen("tpc_geom_table.txt", "r");
+    FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
     if (!fp) { printf("no tpc_geom_table.txt\n"); return; }
     char line[512];
     while (fgets(line, sizeof line, fp))
@@ -1030,7 +1044,7 @@ void nf_sag_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
                                 nwin[1] ? 100. * nfitw[1] / nwin[1] : 0));
   tx.DrawLatex(0.14, 0.61, "same tracks as the global fit; window gate: >=3 rows, n>=5");
   tx.DrawLatex(0.14, 0.56, "local fit sees point scatter only; curvature invisible over 4 rows");
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_saghits_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_saghits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_saghits_%s.png\n", ver);
 }
 
@@ -1048,14 +1062,14 @@ void nf_sag_hits(const char *g4pat = "../P5/PP_g4hit_%d.root", int ng4 = 10,
 //    quadrature effect on the real side; (b) grouping asymmetry: sim = the
 //    particle's own pixels (truth), real = road-matched pixels around seed
 //    clusters (association tails included).
-void nf_digipix(const char *digif = "digi_frames_production_v6.root", int nsim = 60,
-                const char *realf = "../clusters_seeds_island_79507-0.root_ntuplizer.root",
+void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root", int nsim = 60,
+                const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                 const char *ver = "v6", const char *dump = "")
 {
   using namespace MNF;
   double rowR[55];
   {
-    FILE *fp = fopen("tpc_geom_table.txt", "r");
+    FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
     if (!fp) { printf("no tpc_geom_table.txt\n"); return; }
     char line[512];
     while (fgets(line, sizeof line, fp))
@@ -1220,6 +1234,6 @@ void nf_digipix(const char *digif = "digi_frames_production_v6.root", int nsim =
       tx.DrawLatex(0.44, 0.56, "this ratio is the RESPONSE, distortion-free");
     }
   }
-  cv->SaveAs(Form("../sim_validation_plots/ms_nofinder_digipix_%s.png", ver));
+  cv->SaveAs(Form("%s/ms_nofinder_digipix_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_digipix_%s.png\n", ver);
 }
