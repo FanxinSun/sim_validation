@@ -335,8 +335,8 @@ std::vector<Trk> hunt(const std::vector<Cl> &C, double cohband = 8, double cohsl
 }  // namespace MTK
 
 void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v53.root",
-                   const char *ver = "v53f", const char *vtag = "v5.3",
+                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                   const char *ver = "v61", const char *vtag = "V6.1",
                    int nsimev = 50)
 {
   using namespace MTK;
@@ -603,8 +603,8 @@ void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
 // Real rates quoted on COMPLETE events (cluster-tbin p99.9 > 950) per the
 // dual-reference convention; sim frames are always complete.
 void mt_cluscmp(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-                const char *ver = "v6", int nsimev = 50)
+                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                const char *ver = "v61", int nsimev = 50)
 {
   using namespace MTK;
   std::map<int, std::vector<Cl>> ev[2];
@@ -770,7 +770,7 @@ void mt_cluscmp(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clust
 // principles findable track-class rate per collision, against the direct
 // truth-group count under the same acceptance.
 void mt_g4scan(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int nfiles = 1,
-               const char *ver = "v6")
+               const char *ver = "v61")
 {
   using namespace MTK;
   long ncoll = 0, nfound = 0, ntruth = 0, nrec = 0, ndupe = 0, nsub = 0, nghost = 0, nrms05 = 0;
@@ -867,7 +867,7 @@ void mt_g4scan(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_
 // (no charge weighting), so the per-point RMS is expected slightly above
 // the cluster level.
 void mt_pixscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                int nev = 25, const char *ver = "v6")
+                int nev = 25, const char *ver = "v61")
 {
   using namespace MTK;
   TFile *f = TFile::Open(realf);
@@ -1022,8 +1022,8 @@ void mt_pixscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clust
 // fixed (rms variants above 0.30 would be no-ops by construction). Looser-
 // than-nominal points carry a second-order claiming approximation (declared).
 void mt_rocscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-                const char *ver = "v6", int nsimev = 50)
+                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                const char *ver = "v61", int nsimev = 50)
 {
   using namespace MTK;
   struct SR { int n, nlay, span, maxgap; double R, rms, medtb, pur; bool nom; int lab; };

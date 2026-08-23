@@ -276,7 +276,7 @@ FILE *openLedger(const char *ver)
 //    ntp_hit pixels, same canvas (log-x RMS: the two are 40x apart).
 void nf_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int nfiles = 10,
              const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-             const char *ver = "v6")
+             const char *ver = "v61")
 {
   using namespace MNF;
   // --- sim: truth groups per collision -------------------------------------
@@ -376,9 +376,9 @@ void nf_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4
 // ---------------------------------------------------------------------------
 // 2. CLUSTER LEVEL, no finder: sim island91 ntp_cluster truth-grouped vs real
 //    ntp_clus_trk tracker-grouped, same canvas.
-void nf_clusters(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
+void nf_clusters(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
                  const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                 const char *ver = "v6")
+                 const char *ver = "v61")
 {
   using namespace MNF;
   std::vector<double> rms[2], Rv[2];                  // [0]=real [1]=sim
@@ -486,7 +486,7 @@ void nf_clusters(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island
 // 3. TRACK LEVEL, no finder: real-only (local sim reco yields no tracks).
 //    ntp_clus_trk fitted; event display + statistics on one canvas.
 void nf_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-               const char *ver = "v6", int showev = 7)
+               const char *ver = "v61", int showev = 7)
 {
   using namespace MNF;
   std::map<std::pair<int, int>, Grp> g;
@@ -623,7 +623,7 @@ void nf_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cluste
 //    distribution itself); sigma about the sample mean, 3sigma-clipped core.
 void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int ng4 = 10,
                 const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *ver = "v6")
+                const char *ver = "v61")
 {
   using namespace MNF;
   const double PTW[2][2] = {{0.45, 0.55}, {1.5, 2.5}};
@@ -902,7 +902,7 @@ void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP
 //    unfittable; truth local RMS = the um floor (locally exact arc).
 void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int ng4 = 10,
                  const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                 const char *ver = "v6")
+                 const char *ver = "v61")
 {
   using namespace MNF;
   double rowR[55];
@@ -1062,9 +1062,9 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
 //    quadrature effect on the real side; (b) grouping asymmetry: sim = the
 //    particle's own pixels (truth), real = road-matched pixels around seed
 //    clusters (association tails included).
-void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root", int nsim = 60,
+void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v61.root", int nsim = 60,
                 const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *ver = "v6", const char *dump = "")
+                const char *ver = "v61", const char *dump = "")
 {
   using namespace MNF;
   double rowR[55];

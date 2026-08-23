@@ -229,8 +229,8 @@ bool splitClus(CT &T, double r0, double &out,
 }  // namespace MSR
 
 void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-             const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-             const char *ver = "v6", const char *vtag = "V6",
+             const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+             const char *ver = "v61", const char *vtag = "V6.1",
              double r0 = 49.0)
 {
   using namespace MSR;
@@ -420,8 +420,8 @@ void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters
 // (full-crosser gates on survivors), giving purified data/MC ratios.
 // Output: ../sim_validation_plots/ms_realcheck_<ver>.png + ms_realcheck_<ver>.txt
 void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-                  const char *ver = "v6", const char *vtag = "V6",
+                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                  const char *ver = "v61", const char *vtag = "V6.1",
                   double rescut = 0.30)
 {
   using namespace MSR;
@@ -627,8 +627,8 @@ void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clu
 //          ../sim_validation_plots/ms_real_showcase_<ver>.png
 //          ms_real_split_<ver>.txt
 void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-                   const char *ver = "v6", const char *vtag = "V6",
+                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                   const char *ver = "v61", const char *vtag = "V6.1",
                    double r0 = 49.0)
 {
   using namespace MSR;
@@ -911,8 +911,8 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
 // medians per bin are used for display robustness against secondaries.
 // Output: ../sim_validation_plots/ms_d0diag_<ver>.png + ms_d0diag_<ver>.txt
 void ms_d0diag(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-               const char *ver = "v6", const char *vtag = "V6")
+               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+               const char *ver = "v61", const char *vtag = "V6.1")
 {
   using namespace MSR;
   struct DT { std::vector<double> x, y; int lmin = 99, lmax = 0; std::vector<double> tb; };

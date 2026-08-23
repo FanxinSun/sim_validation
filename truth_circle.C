@@ -145,8 +145,8 @@ double wrapphi(double d)
 
 void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
                   const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
-                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v53.root",
-                  const char *ver = "v53", const char *vtag = "v5.3")
+                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                  const char *ver = "v53", const char *vtag = "V6.1")
 {
   using namespace TCIRC;
   const double BFIELD = 1.4;                                   // T (nominal yardstick)

@@ -104,9 +104,9 @@ double pct(std::vector<double> v, double p)
 struct Rec { int n; double span, R, rms; bool okfit; };
 }  // namespace MBS
 
-void ms_barscan(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
+void ms_barscan(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
                 const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                const char *ver = "v6")
+                const char *ver = "v61")
 {
   using namespace MBS;
   std::vector<Rec> rec[2];                            // [0]=real [1]=sim

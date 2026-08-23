@@ -157,8 +157,8 @@ bool tangentAtR(const Fit &F, double r0, double hx, double hy,
 // tails from the Gaussian MS core) and stat errors sigma/sqrt(2N). Writes
 // under its own tag — the sealed v53 outputs remain era records.
 void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
-               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
-               const char *ver = "v6", const char *vtag = "V6",
+               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+               const char *ver = "v61", const char *vtag = "V6.1",
                double r0 = 35.0)
 {
   using namespace MSD;
@@ -409,7 +409,7 @@ void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFin
 // quantitative checks are the 1/p scaling and the split stability.
 // Track sample: fixed full-crosser selection for all r0 (apples-to-apples).
 void ms_r0scan(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
-                const char *ver = "v6", const char *vtag = "V6")
+                const char *ver = "v61", const char *vtag = "V6.1")
 {
   using namespace MSD;
   const double R0S[3] = {35, 49, 63};
