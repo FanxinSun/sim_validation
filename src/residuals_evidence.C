@@ -1,4 +1,4 @@
-// residuals_evidence.C — ORIGINAL-PURPOSE producer for sim_validation_plots/residuals_evidence.png
+// residuals_evidence.C — ORIGINAL-PURPOSE producer for plots/residuals_evidence.png
 //
 // Day-2 origin (then an inline throwaway; persistent now per the provenance rule):
 // evidence panels for the two NAMED residuals of that era, same variables/binning/axes:
@@ -10,7 +10,26 @@
 //
 // v33_b42 edition: REAL islands (island_real.root, 100 frames) vs SIM v3.3 B4.2
 // (island_frames_v33.root, 250 composed frames at the P1-derived rate).
-#include "canon.h"
+#include "../include/canon.h"
+
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
 
 void residuals_evidence(const char *realisl = "island_real.root",
                         const char *simisl = "island_frames_v40b.root",
@@ -92,7 +111,7 @@ void residuals_evidence(const char *realisl = "island_real.root",
   L2->AddEntry(q2, Form("%s (per frame, %d): flat #times%.2f", tag, (int) nS, ratio), "l");
   L2->Draw();
 
-  c.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/residuals_evidence%s.png", suffix));
+  c.SaveAs(Form("%s/plots/residuals_evidence%s.png", VDIR(), suffix));
   printf("islands/frame: real %.0f | sim %.0f (x%.2f); <phisize> real %.2f | sim %.2f (%+.1f%%)\n",
          q1->Integral(), q2->Integral(), ratio, m1, m2, 100. * (m2 - m1) / m1);
 }

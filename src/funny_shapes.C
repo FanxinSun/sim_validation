@@ -1,4 +1,4 @@
-// funny_shapes.C — ORIGINAL-PURPOSE producer for sim_validation_plots/funny_shapes.png
+// funny_shapes.C — ORIGINAL-PURPOSE producer for plots/funny_shapes.png
 //
 // Reproduces the user's notebook view (Visualizing: "Event 74 layer 15 hits:
 // zoomed phi-tbin view" — phi in [0,1] rad, tbin in [600,800], viridis, ADC color)
@@ -21,12 +21,31 @@
 #include <cmath>
 #include <cstdio>
 
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
+
 void funny_shapes(const char *realpix =
                       "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                   const char *simpix = "digi_frames_production_v40b.root",
                   int realevent = 74, int simlayer = 15, int simframe = -1, int reallayer = -1,
                   double philo = 0.0, double phihi = 1.0, int tlo = 600, int thi = 800,
-                  const char *out = "/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/funny_shapes.png",
+                  const char *out = nullptr,  // default: <checkout>/plots/funny_shapes.png
                   const char *tag = "pAu v3.6")
 {
   gROOT->SetBatch(1);
@@ -105,6 +124,6 @@ void funny_shapes(const char *realpix =
     pr.second->GetZaxis()->SetTitle("ADC");
     pr.second->Draw("COLZ");
   }
-  c.SaveAs(out);
+  c.SaveAs(out && out[0] ? out : Form("%s/plots/funny_shapes.png", VDIR()));
   printf("funny_shapes: original-purpose view regenerated (real evt %d vs %s frame %d)\n", realevent, tag, bestfr);
 }

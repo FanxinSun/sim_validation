@@ -14,7 +14,7 @@
 // global bar >=12 pts, span >=15 cm, 45<=R_fit<2e4; windows by fitted R).
 // Truth hits themselves are the ideal trajectory by construction (20 um /
 // 1.365 mrad) and are identical in both productions — quoted, not re-run.
-// Outputs: ../sim_validation_plots/ms_fieldcmp_{clusters,pixels}_<ver>.png
+// Outputs: plots/ms_fieldcmp_{clusters,pixels}_<ver>.png
 //          ms_fieldcmp_<ver>.txt
 #include <TFile.h>
 #include <TTree.h>
@@ -32,14 +32,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -374,7 +379,7 @@ void fc_clusters(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/isla
     tx.DrawLatex(0.14, 0.74, "trajectories point at the beamline;");
     tx.DrawLatex(0.14, 0.68, "their displaced images do not");
   }
-  cv->SaveAs(Form("%s/ms_fieldcmp_clusters_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_fieldcmp_clusters_%s.png", VDIR(), ver));
   printf("wrote ms_fieldcmp_clusters_%s.png\n", ver);
 }
 
@@ -510,6 +515,6 @@ void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island
       tx.DrawLatex(0.44, 0.59, "local fit is field-blind by construction");
     }
   }
-  cv->SaveAs(Form("%s/ms_fieldcmp_pixels_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_fieldcmp_pixels_%s.png", VDIR(), ver));
   printf("wrote ms_fieldcmp_pixels_%s.png\n", ver);
 }

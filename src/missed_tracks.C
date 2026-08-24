@@ -20,7 +20,7 @@
 //                purity vs truth, and the truth count of findable tracks.
 // Per found track the median cluster tbin classifies IN-TIME (band 60-360)
 // vs OUT-OF-TIME — the expected home of tracker-missed but genuine tracks.
-// Output: ../sim_validation_plots/missed_tracks_<ver>.png + missed_tracks_<ver>.txt
+// Output: plots/missed_tracks_<ver>.png + ledgers/missed_tracks_<ver>.txt
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -40,14 +40,19 @@
 #include <numeric>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -591,8 +596,8 @@ void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
     tx.DrawLatex(0.06, 0.22, "out-of-time finds = genuine tracks an in-time tracker skips by design,");
     tx.DrawLatex(0.06, 0.16, "but real charge that cluster-level ML must classify.");
   }
-  cv->SaveAs(Form("%s/missed_tracks_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/missed_tracks_%s.png + missed_tracks_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/missed_tracks_%s.png", VDIR(), ver));
+  printf("wrote plots/missed_tracks_%s.png + missed_tracks_%s.txt\n", ver, ver);
 }
 
 // ---------------------------------------------------------------------------
@@ -758,7 +763,7 @@ void mt_cluscmp(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clust
     for (int s = 0; s < 2; ++s) { hn[s]->Write(); hr[s]->Write(); hR[s]->Write(); hT[s]->Write(); }
     fh.Close();
   }
-  cv->SaveAs(Form("%s/ms_cluscmp_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_cluscmp_%s.png", VDIR(), ver));
   printf("wrote ms_cluscmp_%s outputs\n", ver);
 }
 
@@ -998,7 +1003,7 @@ void mt_pixscan(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clust
     tx.DrawLatex(0.06, 0.33, "tracks are findable straight from raw pixels when");
     tx.DrawLatex(0.06, 0.26, "the (x, y) circle and tbin-line are demanded JOINTLY");
   }
-  cv->SaveAs(Form("%s/ms_pixscan_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_pixscan_%s.png", VDIR(), ver));
   printf("wrote ms_pixscan_%s outputs\n", ver);
 }
 

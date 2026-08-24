@@ -4,7 +4,7 @@
 // (defaults 590/846 = 0.6974), per-frame normalized. If the residual's shape
 // differs across observables from collision content -> background (structured
 // fingerprint). If residual/real is ~constant everywhere -> scale-like (eps).
-#include "canon.h"
+#include "../include/canon.h"
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -13,6 +13,25 @@
 #include <TStyle.h>
 #include <TROOT.h>
 #include <algorithm>
+
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace RFP
 {
@@ -115,6 +134,6 @@ void residual_fingerprint(double s = 0.6974,   // NR default 99: the real as-rec
   fr6->SetMinimum(-0.5); fr6->SetMaximum(0.5);  // negative = sim above real
   fr6->Draw("HIST");
   TLine *z6 = new TLine(0, 0, 5, 0); z6->SetLineColor(kBlack); z6->Draw();
-  c.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/residual_fingerprint%s.png", suffix));
+  c.SaveAs(Form("%s/plots/residual_fingerprint%s.png", VDIR(), suffix));
   printf("saved residual_fingerprint%s.png\n", suffix);
 }

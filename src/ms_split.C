@@ -17,7 +17,7 @@
 //   (Ar75:CF4-20:iso-5) -> X0 = 24.0 g/cm2 = 112 m. theta0 evaluated per
 //   track with its 3D path length (pion beta assumed; sample is 87% pi).
 // Companion: truth_circle.C (trajectory circularity + cluster residuals).
-// Output: ../sim_validation_plots/ms_split_<ver>.png + ms_split_<ver>.txt
+// Output: plots/ms_split_<ver>.png + ledgers/ms_split_<ver>.txt
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -36,14 +36,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -391,8 +396,8 @@ void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFin
     tx.DrawLatex(0.06, 0.21, "     comparable to the measurement term only below ~0.5-1 GeV");
     tx.DrawLatex(0.06, 0.10, "gas: Ar75:CF4-20:iso-5 (from sphenix_p5.gdml), X_{0} = 112 m");
   }
-  cv->SaveAs(Form("%s/ms_split_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/ms_split_%s.png + ms_split_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/ms_split_%s.png", VDIR(), ver));
+  printf("wrote plots/ms_split_%s.png + ms_split_%s.txt\n", ver, ver);
 }
 
 // ---------------------------------------------------------------------------
@@ -598,6 +603,6 @@ void ms_r0scan(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFi
   tx.DrawLatex(0.14, 0.35, Form("cross-window ratio at each r_{0}: %.2f / %.2f / %.2f  (Highland %.2f)",
                                 sdat[0][0] / std::max(1e-9, sdat[1][0]), sdat[0][1] / std::max(1e-9, sdat[1][1]),
                                 sdat[0][2] / std::max(1e-9, sdat[1][2]), qm[0] / std::max(1e-9, qm[1])));
-  cv->SaveAs(Form("%s/ms_r0scan_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/ms_r0scan_%s.png + ms_r0scan_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/ms_r0scan_%s.png", VDIR(), ver));
+  printf("wrote plots/ms_r0scan_%s.png + ms_r0scan_%s.txt\n", ver, ver);
 }

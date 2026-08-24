@@ -13,14 +13,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();

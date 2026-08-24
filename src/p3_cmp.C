@@ -2,6 +2,25 @@
 // production since the 2026-07-13 full-suite replot; was the v1/240kHz record —
 // that version lives in git history at 81cd06d):
 // real pixel curves from ref_real.root (layer 7-54 && adc>0); islands from island91_real.
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
+
 void p3_cmp(const char *simfile = "digi_frames_production_v40b.root",
             const char *suffix = "", const char *tag = "SIM v4.0",
             const char *simisl = "island91_frames_production_v40b.root"){
@@ -30,6 +49,6 @@ void p3_cmp(const char *simfile = "digi_frames_production_v40b.root",
   d2(c.cd(4),H(ri,"phisize","a4",25,0.5,25.5),H(si,"phisize","b4",25,0.5,25.5),"island #phi-size;pads;norm",true);
   d2(c.cd(5),H(ri,"zsize","a5",40,0.5,40.5),H(si,"zsize","b5",40,0.5,40.5),"island z-size;tbins;norm",true);
   d2(c.cd(6),H(ri,"adc","a6",150,0,6000),H(si,"adc","b6",150,0,6000),"island ADC;raw sum;norm",true);
-  c.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/p3_production_cmp%s.png",suffix));
+  c.SaveAs(Form("%s/plots/p3_production_cmp%s.png", VDIR(),suffix));
   printf("p3_production_cmp%s.png regenerated anchor-consistent\n",suffix);
 }

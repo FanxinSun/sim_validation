@@ -23,7 +23,7 @@
 // (tbin 322-340) is NOT excluded: the association road is tbin-limited
 // around genuine seed clusters, so flash contamination is negligible, and
 // the sim side (truth hits, no time axis) admits no symmetric cut.
-// Outputs: ../sim_validation_plots/ms_nofinder_{hits,clusters,tracks_real}_<ver>.png
+// Outputs: plots/ms_nofinder_{hits,clusters,tracks_real}_<ver>.png
 //          ms_nofinder_<ver>.txt (shared ledger, appended per entry)
 #include <TFile.h>
 #include <TTree.h>
@@ -46,14 +46,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -369,7 +374,7 @@ void nf_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4
   tx.DrawLatex(0.14, 0.66, Form("N tracks: real %ld, sim %ld", rgrp, sgrp));
   tx.DrawLatex(0.14, 0.61, "same fitter, same bar; no outlier removal, no p_{T} windows");
   tx.DrawLatex(0.14, 0.56, "the gap IS the detector: diffusion + pad/tbin quantization");
-  cv->SaveAs(Form("%s/ms_nofinder_hits_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_hits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_hits_%s.png\n", ver);
 }
 
@@ -478,7 +483,7 @@ void nf_clusters(const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island
   tx.DrawLatex(0.40, 0.66, Form("N tracks: real %ld, sim %ld; data/MC %.2f",
                                 ngrp[0], ngrp[1], med(rms[1]) > 0 ? med(rms[0]) / med(rms[1]) : 0));
   tx.DrawLatex(0.40, 0.61, "same fitter, same bar; no outlier removal, no p_{T} windows");
-  cv->SaveAs(Form("%s/ms_nofinder_clusters_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_clusters_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_clusters_%s.png\n", ver);
 }
 
@@ -604,7 +609,7 @@ void nf_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cluste
     tx.DrawLatex(0.48, 0.58, "sim skipped: no tracker output in sim");
     tx.DrawLatex(0.48, 0.53, "(cluster-level mirror = nf_clusters)");
   }
-  cv->SaveAs(Form("%s/ms_nofinder_tracks_real_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_tracks_real_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_tracks_real_%s.png\n", ver);
 }
 
@@ -882,7 +887,7 @@ void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP
     tx.DrawLatex(0.13, 0.57, Form("adopted border 35: #sigma = %.3f (record 1.365)", ss[0][0]));
     tx.DrawLatex(0.13, 0.51, "NOTE x-scale: 12x zoom vs left panel");
   }
-  cv->SaveAs(Form("%s/ms_nofinder_mshits_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_mshits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_mshits_%s.png\n", ver);
 }
 
@@ -1044,7 +1049,7 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
                                 nwin[1] ? 100. * nfitw[1] / nwin[1] : 0));
   tx.DrawLatex(0.14, 0.61, "same tracks as the global fit; window gate: >=3 rows, n>=5");
   tx.DrawLatex(0.14, 0.56, "local fit sees point scatter only; curvature invisible over 4 rows");
-  cv->SaveAs(Form("%s/ms_nofinder_saghits_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_saghits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_saghits_%s.png\n", ver);
 }
 
@@ -1234,6 +1239,6 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
       tx.DrawLatex(0.44, 0.56, "this ratio is the RESPONSE, distortion-free");
     }
   }
-  cv->SaveAs(Form("%s/ms_nofinder_digipix_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_nofinder_digipix_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_digipix_%s.png\n", ver);
 }

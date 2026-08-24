@@ -15,6 +15,25 @@
 #include <algorithm>
 #include <set>
 
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
+
 void p3_cmp3(const char *simfile = "digi_frames_production_v53.root",
              const char *suffix = "_v53_bothrefs", const char *tag = "SIM v5.3 pp",
              const char *simisl = "island91_frames_production_v53.root")
@@ -126,6 +145,6 @@ void p3_cmp3(const char *simfile = "digi_frames_production_v53.root",
   d3(cv.cd(4), &h4a, &h4c, &h4s, "island #phi-size;pads;norm", true);
   d3(cv.cd(5), &h5a, &h5c, &h5s, "island z-size;tbins;norm", true);
   d3(cv.cd(6), &h6a, &h6c, &h6s, "island ADC;raw sum;norm", true);
-  cv.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/p3_production_cmp%s.png", suffix));
+  cv.SaveAs(Form("%s/plots/p3_production_cmp%s.png", VDIR(), suffix));
   printf("p3_production_cmp%s.png saved (three-line dual-reference)\n", suffix);
 }

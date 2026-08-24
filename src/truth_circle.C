@@ -27,7 +27,7 @@
 // Inner fiducial border 34 -> 35 cm (user, 2026-07-31) — aligned with the
 // adopted multiple-scattering (MS) split border in ms_split.C.
 // Showcase panels use the most-sampled CLEAN track/segment (stated criterion).
-// Output: ../sim_validation_plots/truth_circle_<ver>.png + truth_circle_<ver>.txt
+// Output: plots/truth_circle_<ver>.png + ledgers/truth_circle_<ver>.txt
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -45,14 +45,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -467,6 +472,6 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
     lg->Draw();
   }
 
-  cv->SaveAs(Form("%s/truth_circle_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/truth_circle_%s.png + truth_circle_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/truth_circle_%s.png", VDIR(), ver));
+  printf("wrote plots/truth_circle_%s.png + truth_circle_%s.txt\n", ver, ver);
 }

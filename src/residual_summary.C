@@ -22,9 +22,28 @@
 #include <string>
 #include <vector>
 
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
+
 void residual_summary(const char *datafile = "residuals_v50.txt",
                       const char *title = "v5.0 pp pilot: all residuals (sim/real - 1)",
-                      const char *out = "/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/residual_summary_v50.png")
+                      const char *out = nullptr)  // default: <checkout>/plots/residual_summary_v50.png
 {
   gROOT->SetBatch(1);
   gStyle->SetOptStat(0);
@@ -102,6 +121,6 @@ void residual_summary(const char *datafile = "residuals_v50.txt",
   lg->AddEntry(ga, "vs ALL real events as recorded (99, laser event vetoed)", "p");
   lg->AddEntry(gs, "vs COMPLETE subset (61 non-laser events, full windows)", "p");
   lg->Draw();
-  c.SaveAs(out);
+  c.SaveAs(out && out[0] ? out : Form("%s/plots/residual_summary_v50.png", VDIR()));
   printf("residual_summary: %d rows -> %s\n", N, out);
 }

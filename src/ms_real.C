@@ -23,7 +23,7 @@
 // scaling seen on truth hits — the real data demonstrating directly that MS
 // is invisible under cluster resolution. Data-vs-MC agreement of the widths
 // then checks the sim's cluster resolution realism.
-// Output: ../sim_validation_plots/ms_real_<ver>.png + ms_real_<ver>.txt
+// Output: plots/ms_real_<ver>.png + ledgers/ms_real_<ver>.txt
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -42,14 +42,19 @@
 #include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
-// repo dir of THIS macro, resolved absolute at first use: outputs land beside
-// the macro (figures at top level, ledgers under ledgers/), so the suite runs
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
 static const char *VDIR()
 {
   static TString d = [] {
     TString p = gSystem->DirName(__FILE__);
     if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
     return p;
   }();
   return d.Data();
@@ -393,8 +398,8 @@ void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters
                                   r0, rmsof(dps[0][w]), rmsof(dps[1][w])));
     tx.DrawLatex(0.40, 0.57, "(resolution-driven, p_{T}-independent, not MS)");
   }
-  cv->SaveAs(Form("%s/ms_real_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/ms_real_%s.png + ms_real_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/ms_real_%s.png", VDIR(), ver));
+  printf("wrote plots/ms_real_%s.png + ms_real_%s.txt\n", ver, ver);
 }
 
 // ---------------------------------------------------------------------------
@@ -418,7 +423,7 @@ void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters
 //     are genuine secondaries — decays/conversions — NOT used as a cut).
 // Then the pT-window circle comparison is REDONE on cleaned tracks
 // (full-crosser gates on survivors), giving purified data/MC ratios.
-// Output: ../sim_validation_plots/ms_realcheck_<ver>.png + ms_realcheck_<ver>.txt
+// Output: plots/ms_realcheck_<ver>.png + ledgers/ms_realcheck_<ver>.txt
 void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
                   const char *ver = "v61", const char *vtag = "V6.1",
@@ -611,8 +616,8 @@ void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clu
     tx.DrawLatex(0.40, 0.66, "peak = primaries from the beamline;");
     tx.DrawLatex(0.40, 0.60, "tail = genuine secondaries (decays, conversions)");
   }
-  cv->SaveAs(Form("%s/ms_realcheck_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/ms_realcheck_%s.png + ms_realcheck_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/ms_realcheck_%s.png", VDIR(), ver));
+  printf("wrote plots/ms_realcheck_%s.png + ms_realcheck_%s.txt\n", ver, ver);
 }
 
 // ---------------------------------------------------------------------------
@@ -623,8 +628,8 @@ void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clu
 // The worst showcase (largest-|dpsi| real track at pT~0.5, drawn with its two
 // half-fit circles and boundary tangents) and the remaining statistics go to
 // a SECOND png so the primary stays parallel to what the supervisor has.
-// Outputs: ../sim_validation_plots/ms_real_split_<ver>.png
-//          ../sim_validation_plots/ms_real_showcase_<ver>.png
+// Outputs: plots/ms_real_split_<ver>.png
+//          plots/ms_real_showcase_<ver>.png
 //          ms_real_split_<ver>.txt
 void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                    const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
@@ -823,7 +828,7 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
     tx.SetTextSize(0.030);
     tx.DrawLatex(0.06, 0.05, "real tracks = ntp_clus_trk (event, seedID); windows by fitted curvature both sides");
   }
-  cv->SaveAs(Form("%s/ms_real_split_%s.png", VDIR(), ver));
+  cv->SaveAs(Form("%s/plots/ms_real_split_%s.png", VDIR(), ver));
 
   // ---------- PNG 2: worst showcase + other statistics ----------
   TCanvas *cw = new TCanvas("cvws", Form("ms real showcase %s", ver), 1500, 660);
@@ -895,7 +900,7 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
     tx.DrawLatex(0.44, 0.48, Form("N tracks: real %zu / %zu, sim %zu / %zu",
                                   rmsv[0][0].size(), rmsv[0][1].size(), rmsv[1][0].size(), rmsv[1][1].size()));
   }
-  cw->SaveAs(Form("%s/ms_real_showcase_%s.png", VDIR(), ver));
+  cw->SaveAs(Form("%s/plots/ms_real_showcase_%s.png", VDIR(), ver));
   printf("wrote ms_real_split_%s.png + ms_real_showcase_%s.png + ms_real_split_%s.txt\n", ver, ver, ver);
 }
 
@@ -909,7 +914,7 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
 // track's median tbin. Sim v5.3 runs as the null control on both panels.
 // (x0, y0) extracted by linear least squares on tracks with |d0s| < 8 cm;
 // medians per bin are used for display robustness against secondaries.
-// Output: ../sim_validation_plots/ms_d0diag_<ver>.png + ms_d0diag_<ver>.txt
+// Output: plots/ms_d0diag_<ver>.png + ledgers/ms_d0diag_<ver>.txt
 void ms_d0diag(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
                const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
                const char *ver = "v61", const char *vtag = "V6.1")
@@ -1134,6 +1139,6 @@ void ms_d0diag(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cluste
     tx.DrawLatex(0.40, 0.66, "flat = translation only; slope/structure = drift-");
     tx.DrawLatex(0.40, 0.60, "dependent (distortion-like) component");
   }
-  cv->SaveAs(Form("%s/ms_d0diag_%s.png", VDIR(), ver));
-  printf("wrote ../sim_validation_plots/ms_d0diag_%s.png + ms_d0diag_%s.txt\n", ver, ver);
+  cv->SaveAs(Form("%s/plots/ms_d0diag_%s.png", VDIR(), ver));
+  printf("wrote plots/ms_d0diag_%s.png + ms_d0diag_%s.txt\n", ver, ver);
 }

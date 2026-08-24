@@ -7,7 +7,7 @@
 //   [2] cluster_shapes_cmp.png — ISLAND SEMANTICS (8-connected, true pixel
 //       lists): scalar props + SHAPE MOMENTS (asym, rho) + phisize x zsize
 //       joint maps, real vs sim. Conventions from canon.h.
-#include "canon.h"
+#include "../include/canon.h"
 #include <TFile.h>
 #include <TTree.h>
 #include <TH1D.h>
@@ -18,6 +18,25 @@
 #include <TROOT.h>
 #include <TLatex.h>
 #include <algorithm>
+
+#include <TSystem.h>
+#include <TString.h>
+#include <climits>
+#include <cstdlib>
+// checkout root of THIS macro (the directory above src/), resolved absolute at
+// first use, so figures land in plots/ whatever the cwd.
+static const char *VDIR()
+{
+  static TString d = [] {
+    TString p = gSystem->DirName(__FILE__);
+    if (!p.BeginsWith("/")) p = TString(gSystem->pwd()) + "/" + p;
+    p += "/..";  // src/ -> checkout root
+    char buf[PATH_MAX];
+    if (realpath(p.Data(), buf)) p = buf;
+    return p;
+  }();
+  return d.Data();
+}
 
 namespace CSC
 {
@@ -85,7 +104,7 @@ void cluster_shapes_cmp(const char *suffix = "",
      mk(gc, "phisize*zsize", "p5g", 60, 0.5, 120.5, ""));
   d2(c1.cd(6), mk(rc, "adc/(phisize*zsize)", "p6", 80, 0, 400, RC), mk(sc, "adc/(phisize*zsize)", "p6s", 80, 0, 400, ""),
      "charge density adc/area;ADU per cell;norm", true, mk(gc, "adc/(phisize*zsize)", "p6g", 80, 0, 400, ""));
-  c1.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/cluster_props_cmp%s.png", suffix));
+  c1.SaveAs(Form("%s/plots/cluster_props_cmp%s.png", VDIR(), suffix));
   printf("saved cluster_props_cmp%s.png\n", suffix);
 
   // ---------- [2] island semantics: shapes ----------
@@ -119,7 +138,7 @@ void cluster_shapes_cmp(const char *suffix = "",
   TH2D *j3 = (TH2D *) j2->Clone("j3"); j3->Divide(j1);
   j3->SetTitle("ratio SIM/REAL;pads;tbins");
   j3->SetStats(0); j3->SetMinimum(0.2); j3->SetMaximum(5); gPad->SetLogz(); j3->Draw("COLZ");
-  c2.SaveAs(Form("/home/rog/sPHENIX/3D_ClusterFindingML/sim_validation_plots/cluster_shapes_cmp%s.png", suffix));
+  c2.SaveAs(Form("%s/plots/cluster_shapes_cmp%s.png", VDIR(), suffix));
   printf("saved cluster_shapes_cmp%s.png\n", suffix);
 
   // headline numbers
