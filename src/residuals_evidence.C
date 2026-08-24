@@ -11,6 +11,15 @@
 // v33_b42 edition: REAL islands (island_real.root, 100 frames) vs SIM v3.3 B4.2
 // (island_frames_v33.root, 250 composed frames at the P1-derived rate).
 #include "../include/canon.h"
+#include <TTree.h>
+#include <TCanvas.h>
+#include <TLegend.h>
+#include <TStyle.h>
+#include <TROOT.h>
+#include <TVirtualPad.h>
+#include <algorithm>
+#include <cstdio>
+#include <set>
 
 #include <TSystem.h>
 #include <TString.h>

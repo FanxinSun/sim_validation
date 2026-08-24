@@ -10,6 +10,7 @@
 #include <TH1D.h>
 #include <TCanvas.h>
 #include <TLegend.h>
+#include <TLine.h>
 #include <TStyle.h>
 #include <TROOT.h>
 #include <algorithm>

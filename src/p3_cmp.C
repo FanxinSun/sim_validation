@@ -2,6 +2,15 @@
 // production since the 2026-07-13 full-suite replot; was the v1/240kHz record —
 // that version lives in git history at 81cd06d):
 // real pixel curves from ref_real.root (layer 7-54 && adc>0); islands from island91_real.
+#include <TFile.h>
+#include <TTree.h>
+#include <TH1D.h>
+#include <TCanvas.h>
+#include <TLegend.h>
+#include <TStyle.h>
+#include <TROOT.h>
+#include <TVirtualPad.h>
+#include <algorithm>
 #include <TSystem.h>
 #include <TString.h>
 #include <climits>
