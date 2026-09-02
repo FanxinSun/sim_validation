@@ -1,0 +1,30 @@
+# world_spectra_confront v7pre: tunes ['ours', 'monash', 'mdc2'] | PHENIX per inelastic (sigma_inel 42.0 mb, +9.7% norm. unc. not shown; p/pbar = Table 4 feed-down-corrected), STAR per NSD | gen p/pbar hyperon-feed-down excluded
+TUNE ours: dNch/deta(|eta|<0.5) 3.512 | MBD eps 0.522 | <pT>ch 0.468 | classN 24.55 21.75 9.50 1.78 | NSD frac 0.778
+TUNE monash: dNch/deta(|eta|<0.5) 2.641 | MBD eps 0.523 | <pT>ch 0.449 | classN 20.69 18.33 7.62 1.18 | NSD frac 0.778
+TUNE mdc2: dNch/deta(|eta|<0.5) 1.718 | MBD eps 0.462 | <pT>ch 0.501 | classN 5.94 12.91 7.10 1.36 | NSD frac 0.779
+DATA PHENIX |y|<0.35 inel pi: <pT>trunc 0.583 over 0.30-3.00 | yield(0.5-2.0) 0.2076
+  ours    PHENIX |y|<0.35 inel pi: mean ratio 2.175 | low-half 2.354 high-half 2.008 | <pT>trunc gen 0.598 vs data 0.583 | yield(0.5-2.0) gen/data 2.439
+  monash  PHENIX |y|<0.35 inel pi: mean ratio 1.353 | low-half 1.582 high-half 1.140 | <pT>trunc gen 0.579 vs data 0.583 | yield(0.5-2.0) gen/data 1.733
+  mdc2    PHENIX |y|<0.35 inel pi: mean ratio 1.393 | low-half 1.267 high-half 1.510 | <pT>trunc gen 0.611 vs data 0.583 | yield(0.5-2.0) gen/data 1.293
+DATA PHENIX |y|<0.35 inel K: <pT>trunc 0.760 over 0.40-2.00 | yield(0.5-2.0) 0.0457
+  ours    PHENIX |y|<0.35 inel K: mean ratio 1.623 | low-half 1.811 high-half 1.435 | <pT>trunc gen 0.732 vs data 0.760 | yield(0.5-2.0) gen/data 1.779
+  monash  PHENIX |y|<0.35 inel K: mean ratio 1.088 | low-half 1.314 high-half 0.862 | <pT>trunc gen 0.711 vs data 0.760 | yield(0.5-2.0) gen/data 1.289
+  mdc2    PHENIX |y|<0.35 inel K: mean ratio 0.878 | low-half 0.971 high-half 0.785 | <pT>trunc gen 0.733 vs data 0.760 | yield(0.5-2.0) gen/data 0.960
+DATA PHENIX |y|<0.35 inel p: <pT>trunc 0.943 over 0.50-4.60 | yield(0.5-2.0) 0.0244
+  ours    PHENIX |y|<0.35 inel p: mean ratio 1.605 | low-half 1.863 high-half 1.346 | <pT>trunc gen 0.890 vs data 0.943 | yield(0.5-2.0) gen/data 2.112
+  monash  PHENIX |y|<0.35 inel p: mean ratio 0.963 | low-half 1.123 high-half 0.803 | <pT>trunc gen 0.853 vs data 0.943 | yield(0.5-2.0) gen/data 1.441
+  mdc2    PHENIX |y|<0.35 inel p: mean ratio 0.968 | low-half 0.973 high-half 0.963 | <pT>trunc gen 0.887 vs data 0.943 | yield(0.5-2.0) gen/data 1.120
+DATA STAR |y|<0.5 NSD pi: <pT>trunc 0.586 over 0.30-3.00 | yield(0.5-2.0) 0.3436
+  ours    STAR |y|<0.5 NSD pi: mean ratio 1.802 | low-half 1.746 high-half 1.850 | <pT>trunc gen 0.601 vs data 0.586 | yield(0.5-2.0) gen/data 1.792
+  monash  STAR |y|<0.5 NSD pi: mean ratio 1.164 | low-half 1.258 high-half 1.082 | <pT>trunc gen 0.582 vs data 0.586 | yield(0.5-2.0) gen/data 1.258
+  mdc2    STAR |y|<0.5 NSD pi: mean ratio 1.041 | low-half 0.892 high-half 1.171 | <pT>trunc gen 0.617 vs data 0.586 | yield(0.5-2.0) gen/data 0.933
+DATA STAR |y|<0.5 NSD K: <pT>trunc 0.768 over 0.41-1.80 | yield(0.5-2.0) 0.0710
+  ours    STAR |y|<0.5 NSD K: mean ratio 1.296 | low-half 1.518 high-half 1.073 | <pT>trunc gen 0.731 vs data 0.768 | yield(0.5-2.0) gen/data 1.374
+  monash  STAR |y|<0.5 NSD K: mean ratio 0.915 | low-half 1.136 high-half 0.694 | <pT>trunc gen 0.712 vs data 0.768 | yield(0.5-2.0) gen/data 0.991
+  mdc2    STAR |y|<0.5 NSD K: mean ratio 0.685 | low-half 0.804 high-half 0.565 | <pT>trunc gen 0.732 vs data 0.768 | yield(0.5-2.0) gen/data 0.731
+DATA STAR |y|<0.5 NSD p: <pT>trunc 0.858 over 0.42-3.88 | yield(0.5-2.0) 0.0557
+  ours    STAR |y|<0.5 NSD p: mean ratio 1.062 | low-half 1.173 high-half 0.952 | <pT>trunc gen 0.820 vs data 0.858 | yield(0.5-2.0) gen/data 1.136
+  monash  STAR |y|<0.5 NSD p: mean ratio 0.672 | low-half 0.827 high-half 0.516 | <pT>trunc gen 0.781 vs data 0.858 | yield(0.5-2.0) gen/data 0.774
+  mdc2    STAR |y|<0.5 NSD p: mean ratio 0.558 | low-half 0.624 high-half 0.491 | <pT>trunc gen 0.810 vs data 0.858 | yield(0.5-2.0) gen/data 0.594
+RATIOS PHENIX |y|<0.35 inel (0.5-1.7 GeV/c): data K/pi 0.218 p/pi 0.116 | ours K/pi 0.160 p/pi 0.101 | monash K/pi 0.163 p/pi 0.097 | mdc2 K/pi 0.163 p/pi 0.101
+RATIOS STAR |y|<0.5 NSD (0.5-1.7 GeV/c): data K/pi 0.211 p/pi 0.157 | ours K/pi 0.159 p/pi 0.101 | monash K/pi 0.163 p/pi 0.098 | mdc2 K/pi 0.163 p/pi 0.102
