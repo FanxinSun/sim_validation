@@ -12,7 +12,7 @@ sys.path.insert(0, HERE)
 import importlib.util
 spec = importlib.util.spec_from_file_location("wsc", os.path.join(HERE, "world_spectra_confront.py"))
 # reuse loaders without executing the script body: re-implement the small pieces here
-REPO = "/home/rog/sPHENIX/3D_ClusterFindingML"; GEN = os.path.join(REPO, "P5/angantyr"); DATA = os.path.join(REPO, "external_data/world_pp200_spectra")
+REPO = "/home/rog/sPHENIX/3D_ClusterFindingML"; GEN = os.path.join(REPO, "P5/angantyr")  # fresh gen_world outputs; archived runs live in <checkout>/ledgers/world_scan; DATA = os.path.join(REPO, "external_data/world_pp200_spectra")
 SIG = 42.0; DPT = 0.05; NB = 100; PTC = (np.arange(NB) + 0.5) * DPT
 DNDE_T, DNDE_E = 2.33, 0.12
 tag = sys.argv[1] if len(sys.argv) > 1 else "v7scan"; prefix = sys.argv[2] if len(sys.argv) > 2 else "scan_"
@@ -39,7 +39,7 @@ for sp, (ap, am, gk, ptmax) in species.items():
     lo, hi, yp, ep = phenix(*ap); _, _, ym, em = phenix(*am)
     m = hi <= ptmax + 1e-9; D[sp] = (lo[m], hi[m], 0.5 * (yp + ym)[m], 0.5 * np.sqrt(ep ** 2 + em ** 2)[m])
 rows = []
-for f in sorted(glob.glob(os.path.join(GEN, f"{prefix}*_world.txt"))):
+for f in sorted(glob.glob(os.path.join(GEN, f"{prefix}*_world.txt")) + glob.glob(os.path.join(VDIR, "ledgers", "world_scan", f"{prefix}*_world.txt"))):
     lab = os.path.basename(f)[:-10]; g = load_gen(f); chi = {}; nb = 0
     for sp, (ap, am, gk, ptmax) in species.items():
         lo, hi, yd, ed = D[sp]
