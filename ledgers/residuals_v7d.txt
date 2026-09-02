@@ -1,0 +1,29 @@
+# v7 DRAFT residual summary (2026-09-02): dev% = sim/real - 1
+# group | label | dev_vs_ALL-99_real | dev_vs_COMPLETE-61_real (999 = n/a)
+# v7d = W1 world-tuned generator (Monash + pT0Ref 2.55, StringPT:sigma 0.36,
+# probStoUD 0.27, probQQtoQ 0.11; dNch/deta 2.18) with the v6.1 detector chain
+# FROZEN. Content rows show the honest TPC-charge deficit of a world-consistent
+# generator; shape/spectral rows show what the detector chain does with less
+# content. NOT a sealed version — decision draft.
+time|window w1 (early)|-16.5|-0.7
+time|window w2 (mid)|-1.5|+2.3
+time|window w3 (late)|+17.7|-2.8
+time|trigger bump (flash-blind)|-15.7|-6.4
+time|drift-edge step|-3.4|-2.9
+time|fired-mean (trig-only)|999|-31.2
+content|px/event mean|-16.8|-34.1
+content|px/event CV|-55.9|-13.9
+content|R1 px share|-8.2|-5.8
+content|R2 px share|+2.4|+0.9
+content|R3 px share|+9.3|+6.9
+content|low-adc(<30)/event|-12.5|-30.6
+islands|islands/event|-10.7|-28.9
+islands|island <size> (full range)|-6.6|-7.1
+islands|island <phi-size>|-3.5|-3.8
+shapes|<abs asym>|+3.5|+3.5
+shapes|<maxadc/adc>|+8.4|+8.8
+pixel|pixmean|+2.7|+1.5
+pixel|sub10 trace|-11.3|-4.2
+pixel|sh/hi band|+17.2|+18.8
+pixel|run mean|-1.9|-2.5
+pixel|run tail P10|+20.0|+18.6
