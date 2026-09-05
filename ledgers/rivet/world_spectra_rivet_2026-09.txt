@@ -1,0 +1,172 @@
+# world_spectra_rivet 2026-09 — CANONICAL confrontation of the reshape-campaign tunes
+# with the experiments' own Rivet analysis definitions.  Companion to, and checked
+# against, the hand-rolled ledgers/world_spectra_confront_v7tune.txt.
+#
+# Rivet 4.1.3 (YODA 2.1.3, HepMC3 3.03.01) — /home/rog/sw/rivet-4.1.3, built 2026-07-30.
+# Generator: Pythia 8.317 (P5/angantyr/install), SoftQCD:inelastic, pp 200 GeV,
+#   written as HepMC3 ASCII by P5/angantyr/gen_hepmc.cc via Pythia8ToHepMC3.
+#   300000 events per sample; sigmaGen = 41.9734 mb for every tune (SoftQCD:inelastic
+#   total cross section does not depend on pT0Ref) and it is what normalises the
+#   spectra — no 42 mb assumption enters the canonical column.
+#   ours        seed 20261001  Monash + MultipartonInteractions:pT0Ref = 1.85
+#   monash      seed 20261002  Monash + MultipartonInteractions:pT0Ref = 2.28
+#   mdc2        seed 20261003  readFile island_post/official_pp_mb_mdc2.cfg  (sPHENIX HF TG MDC2 = Detroit)
+#   mdc2_nolim  seed 20261005  as mdc2 but ParticleDecays:limitTau0 = off  (control for the cfg's tau0Max = 1e-7 mm)
+#   w1          seed 20261004  Monash + pT0Ref 2.55, StringPT:sigma 0.36, StringFlav:probStoUD 0.27, probQQtoQ 0.11
+#
+# Routines:
+#   PHENIX_2011_I886590   local, P5/angantyr/rivet/ (PRC 83 064903; refs from HEPData
+#                         ins886590 Tables 1-8).  Written for this job; the community
+#                         routine (cnattras/RIVETAnalyses @ 1b79221b) is unusable —
+#                         see the .info for the four defects.  UNVALIDATED.
+#   STAR_2005_I628232     local, P5/angantyr/rivet/ (PLB 616 (2005) 8 / nucl-ex/0309012;
+#                         refs from HEPData ins628232 fig2a/b/c, p+p NSD series).  This
+#                         IS the STAR measurement the hand-rolled confrontation used, so
+#                         section C differences conventions and nothing else.  STAR's own
+#                         BBC-coincidence NSD selection, |y|<0.5.  UNVALIDATED.
+#   STAR_2006_I709170     official, shipped with Rivet.  VALIDATED.  BONUS third
+#                         reference only: it is PLB 637 (2006) 161 / nucl-ex/0601033,
+#                         a DIFFERENT paper from ins628232, with pi to 10 and p to
+#                         7 GeV/c and NO kaon observable.  Its value here is the high-pT
+#                         reach.  Its rows are NOT a convention comparison.
+#                         ERRATUM: the handover identified I709170 as PLB 616; it is not.
+#   STAR_2008_I793126     official, shipped with Rivet.  UNVALIDATED and SHAPE-ONLY:
+#                         its finalize() normalises the multiplicity distribution and
+#                         each pT spectrum to a hard-coded data integral, and it folds
+#                         STAR track/vertex efficiencies into the MC.  No absolute yield.
+#   MC_PP200_MULT         local, auxiliary, NO reference data: generator-level dNch/deta
+#                         from the same event loop, for the multiplicity leg.
+#
+# Columns per (tune, experiment, species): mean MC/data ratio over the data bins and
+# its low-half / high-half split by bin index — the convention of
+# world_spectra_confront.py, so the numbers are directly differenceable.
+
+== A: PHENIX PRC 83 064903, |y|<0.35, invariant cross section, canonical ==
+tune        sp     mean     low    high  nbins      hand hand.lo hand.hi    d(mean)  flag
+ours        pi    2.206   2.365   2.059     27     2.175   2.354   2.008     +0.031  ok
+ours        K     1.641   1.833   1.449     16     1.623   1.811   1.435     +0.018  ok
+ours        p     1.655   1.924   1.386     34     1.605   1.863   1.346     +0.050  FLAG
+monash      pi    1.341   1.590   1.111     27     1.353   1.582   1.140     -0.012  ok
+monash      K     1.088   1.331   0.846     16     1.088   1.314   0.862     +0.000  ok
+monash      p     0.895   1.170   0.621     34     0.963   1.123   0.803     -0.068  FLAG
+mdc2        pi    1.381   1.271   1.483     27     1.393   1.267   1.510     -0.012  ok
+mdc2        K     0.900   0.998   0.802     16     0.878   0.971   0.785     +0.022  ok
+mdc2        p     0.980   0.989   0.971     34     0.968   0.973   0.963     +0.012  ok
+mdc2_nolim  pi    1.448   1.330   1.559     27         -       -       -          -  (no hand-rolled counterpart)
+mdc2_nolim  K     0.894   1.005   0.783     16         -       -       -          -  (no hand-rolled counterpart)
+mdc2_nolim  p     1.008   0.916   1.100     34         -       -       -          -  (no hand-rolled counterpart)
+w1          pi    1.032   1.262   0.818     27     1.032   1.269   0.812     -0.000  ok
+w1          K     1.019   1.282   0.755     16     1.010   1.276   0.745     +0.009  ok
+w1          p     0.918   1.077   0.759     34     0.863   1.082   0.644     +0.055  FLAG
+
+== B: the same PHENIX comparison under each single convention change ==
+   y      canonical, |y|<0.35, bin-averaged invariant cross section (column A)
+   eta    |eta|<0.35 instead of |y|<0.35            (rapidity convention)
+   cen    N_bin/(2 pi pT_CENTRE dpT dy)             (binning convention; hand-rolled uses this)
+   inc    p/pbar inclusive instead of feed-down corrected  (feed-down convention, p only)
+tune        sp        y     eta     cen     inc     d.rap   d.bin  d.feed
+ours        pi    2.206   2.185   2.199       -    -0.022  -0.007       -
+ours        K     1.641   1.449   1.635       -    -0.192  -0.006       -
+ours        p     1.655   1.395   1.652   1.497    -0.260  -0.003  -0.158
+monash      pi    1.341   1.326   1.336       -    -0.016  -0.005       -
+monash      K     1.088   0.955   1.085       -    -0.133  -0.004       -
+monash      p     0.895   0.733   0.893   0.793    -0.162  -0.002  -0.102
+mdc2        pi    1.381   1.369   1.377       -    -0.012  -0.004       -
+mdc2        K     0.900   0.796   0.897       -    -0.104  -0.003       -
+mdc2        p     0.980   0.851   0.980   0.746    -0.129  -0.000  -0.233
+mdc2_nolim  pi    1.448   1.436   1.445       -    -0.013  -0.004       -
+mdc2_nolim  K     0.894   0.791   0.891       -    -0.103  -0.003       -
+mdc2_nolim  p     1.008   0.876   1.006   0.888    -0.132  -0.002  -0.120
+w1          pi    1.032   1.019   1.028       -    -0.012  -0.004       -
+w1          K     1.019   0.888   1.015       -    -0.131  -0.004       -
+w1          p     0.918   0.762   0.914   0.839    -0.156  -0.004  -0.079
+
+   Normalisation convention: the hand-rolled column divides the PHENIX cross sections
+   by sigma_inel = 42.0 mb; the canonical column uses the generator's own
+   sigmaGen = 41.9734 mb.  Ratio 42.0/41.9734 = 1.00063, i.e. +0.06% — negligible.
+
+== C: STAR PLB 616 (2005) 8, |y|<0.5, BBC-coincidence NSD, per-NSD-event yields ==
+   Same data as the hand-rolled STAR column, so d(mean) is a convention difference.
+   p    = inclusive p/pbar, as published (the paper states no feed-down treatment)
+   p_fd = the same with hyperon-ancestor protons removed (the hand-rolled definition)
+tune        sp       mean     low    high  nbins      hand hand.lo hand.hi    d(mean)      cen  flag
+ours        pi      1.860   1.814   1.900     15     1.802   1.746   1.850     +0.058    1.844  FLAG
+ours        K       1.325   1.560   1.090     10     1.296   1.518   1.073     +0.029    1.318  ok
+ours        p       1.351   1.517   1.184     14     1.062   1.173   0.952     +0.289    1.341  FLAG
+ours        p_fd    1.079   1.179   0.979     14     1.062   1.173   0.952     +0.017    1.071  ok
+monash      pi      1.216   1.327   1.118     15     1.164   1.258   1.082     +0.052    1.205  FLAG
+monash      K       0.945   1.182   0.709     10     0.915   1.136   0.694     +0.030    0.940  ok
+monash      p       0.868   1.090   0.647     14     0.672   0.827   0.516     +0.196    0.862  FLAG
+monash      p_fd    0.692   0.846   0.537     14     0.672   0.827   0.516     +0.020    0.687  ok
+mdc2        pi      1.097   0.938   1.237     15     1.041   0.892   1.171     +0.056    1.088  FLAG
+mdc2        K       0.720   0.846   0.593     10     0.685   0.804   0.565     +0.035    0.716  ok
+mdc2        p       0.561   0.611   0.511     14     0.558   0.624   0.491     +0.003    0.557  ok
+mdc2        p_fd    0.561   0.611   0.511     14     0.558   0.624   0.491     +0.003    0.557  ok
+mdc2_nolim  pi      1.136   0.995   1.260     15         -       -       -          -    1.127  (no hand-rolled counterpart)
+mdc2_nolim  K       0.727   0.853   0.601     10         -       -       -          -    0.723  (no hand-rolled counterpart)
+mdc2_nolim  p       0.700   0.795   0.604     14         -       -       -          -    0.694  (no hand-rolled counterpart)
+mdc2_nolim  p_fd    0.555   0.613   0.498     14         -       -       -          -    0.551  (no hand-rolled counterpart)
+w1          pi      0.945   1.056   0.848     15     0.908   1.017   0.812     +0.037    0.938  ok
+w1          K       0.907   1.137   0.676     10     0.881   1.119   0.643     +0.026    0.901  ok
+w1          p       0.871   1.147   0.595     14     0.653   0.849   0.457     +0.218    0.865  FLAG
+w1          p_fd    0.656   0.838   0.473     14     0.653   0.849   0.457     +0.003    0.651  ok
+   The hand-rolled STAR column used the hyperon-excluded proton definition, so the
+   p_fd row is its like-for-like counterpart; the p row shows the size of that choice.
+
+== C2 (bonus): STAR_2006_I709170 (PLB 637) — a DIFFERENT measurement, high-pT reach ==
+tune        sp     mean     low    high  nbins | win.mean  win.lo  win.hi    n
+ours        pi    1.956   1.864   2.040     23 |    1.898   1.814   1.972   15
+ours        p     1.320   1.521   1.120     20 |    1.370   1.548   1.193   16
+monash      pi    1.246   1.285   1.211     23 |    1.238   1.327   1.160   15
+monash      p     0.755   1.034   0.475     20 |    0.856   1.097   0.615   16
+mdc2        pi    1.351   0.995   1.676     23 |    1.121   0.938   1.281   15
+mdc2        p     0.570   0.611   0.529     20 |    0.635   0.623   0.648   16
+mdc2_nolim  pi    1.378   1.042   1.686     23 |    1.156   0.995   1.296   15
+mdc2_nolim  p     0.697   0.782   0.612     20 |    0.748   0.808   0.687   16
+w1          pi    0.925   1.013   0.845     23 |    0.963   1.056   0.882   15
+w1          p     0.735   1.069   0.401     20 |    0.877   1.149   0.604   16
+   win.* restricts to the pT window of PLB 616 for orientation only; the rows are not
+   a canonical-vs-hand-rolled comparison.  No kaon row exists in this routine.
+
+== D: multiplicity ==
+   STAR_2008_I793126 d01 is the |eta|<0.5, pT>0.2 GeV/c charged multiplicity
+   distribution, unit-normalised by the routine, with STAR track+vertex efficiencies
+   folded into the MC.  Its MEAN survives the normalisation and is compared here.
+   MC_PP200_MULT is generator level (no efficiency, no data), for the world-value leg.
+tune         <Nch>MC <Nch>dat   ratio | dNch/deta   (NSD)  pT>0.2  NSDfrac | hand dNch/deta
+ours           4.113    2.731   1.506 |     3.521   4.411   2.870    0.658 |          3.512
+monash         3.161    2.731   1.158 |     2.645   3.300   2.139    0.659 |          2.641
+mdc2           2.406    2.731   0.881 |     1.724   2.133   1.468    0.612 |          1.718
+mdc2_nolim     2.536    2.731   0.929 |     1.961   2.422   1.599    0.639 |              -
+w1             2.686    2.731   0.984 |     2.165   2.680   1.750    0.649 |          2.182
+   NSDfrac is the STAR BBC coincidence fraction (>=1 charged in -5.0<eta<-3.3 AND in
+   3.3<eta<5.0); the hand-rolled code called an event NSD by Pythia process code
+   (not 103/104), which gave 0.778-0.779 for every tune.  The NSD DEFINITION is thus
+   itself a convention worth about 0.12-0.17 in accepted fraction.
+   World anchor for A4: dNch/deta(|eta|<0.5) = 2.2-2.4 (the band pre-registered in the
+   handover; the pipeline session supplies PHOBOS 2.29 +- 0.08 inelastic and PHENIX
+   2.38 +- 0.17, NOT independently verified in this session).  No Rivet routine on this
+   box carries a pp 200 GeV dN/deta reference, so this leg is a GENERATOR-LEVEL number
+   against published values, not a Rivet confrontation.
+
+== E: mdc2 decay-handling control ==
+   island_post/official_pp_mb_mdc2.cfg sets ParticleDecays:limitTau0 = on with
+   tau0Max = 1e-7 mm, so Pythia leaves K0S, Lambda (and pi0) undecayed in the mdc2
+   sample.  mdc2_nolim is the same tune with limitTau0 = off.  Difference = the part
+   of the mdc2 signature that is decay handling rather than tune.  Note that in the
+   mdc2 sample the inclusive and feed-down-corrected proton rows of section C are
+   IDENTICAL (0.561 both), which is the direct proof that no hyperon decays occur.
+observable                              mdc2  mdc2_nolim     delta
+PHENIX mean ratio pi                   1.381       1.448    +0.068
+PHENIX mean ratio K                    0.900       0.894    -0.006
+PHENIX mean ratio p                    0.980       1.008    +0.028
+STAR05 (PLB 616) mean ratio pi         1.097       1.136    +0.039
+STAR05 (PLB 616) mean ratio K          0.720       0.727    +0.007
+STAR05 (PLB 616) mean ratio p          0.561       0.700    +0.138
+STAR05 (PLB 616) mean ratio p_fd       0.561       0.555    -0.006
+STAR06 mean ratio (window) pi          1.121       1.156    +0.035
+STAR06 mean ratio (window) p           0.635       0.748    +0.112
+dNch/deta(|eta|<0.5) inel              1.724       1.961    +0.237
+dNch/deta(|eta|<0.5) NSD               2.133       2.422    +0.289
+<Nch> STAR_2008 (folded)               2.406       2.536    +0.129
+
