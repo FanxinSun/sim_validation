@@ -119,12 +119,18 @@ void residual_fingerprint(double s = 0.6974,   // NR default 99: the real as-rec
   c.cd(6);
   TH1D *fr6 = new TH1D("fr6", "residual fraction of REAL;;fraction", 5, 0, 5);
   const char *labs[5] = {"total", "R1", "R2", "R3", "adc<30"};
-  const char *rc[5] = {CANON::TPC_CUT, "layer>=7&&layer<23&&adc>0", "layer>=23&&layer<39&&adc>0",
-                       "layer>=39&&layer<=54&&adc>0", "layer>=7&&layer<=54&&adc>0&&adc<30"};
+  // rc[1]-rc[4] must carry the laser veto as well: they are divided by NR, the
+  // VETOED event count, so an unvetoed numerator inflates the real leg on the
+  // as-recorded reference (found 2026-09-05). Veto sourced from canon.h, never inline.
+  const TString rc[5] = {CANON::TPC_CUT,
+                         TString("layer>=7&&layer<23&&adc>0&&") + CANON::LASER_VETO,
+                         TString("layer>=23&&layer<39&&adc>0&&") + CANON::LASER_VETO,
+                         TString("layer>=39&&layer<=54&&adc>0&&") + CANON::LASER_VETO,
+                         TString("layer>=7&&layer<=54&&adc>0&&adc<30&&") + CANON::LASER_VETO};
   const char *sc[5] = {"", "layer<23", "layer>=23&&layer<39", "layer>=39", "adc<30"};
   for (int i = 0; i < 5; ++i)
   {
-    double R = tr->GetEntries(rc[i]) / NR;
+    double R = tr->GetEntries(rc[i].Data()) / NR;
     double S = ts->GetEntries(sc[i][0] ? sc[i] : "1") / NS * s;
     fr6->SetBinContent(i + 1, (R - S) / R);
     fr6->GetXaxis()->SetBinLabel(i + 1, labs[i]);
