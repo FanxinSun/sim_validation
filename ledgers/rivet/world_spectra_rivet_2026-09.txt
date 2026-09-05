@@ -141,21 +141,33 @@ w1          p     0.735   1.069   0.401     20 |    0.877   1.149   0.604   16
    distribution, unit-normalised by the routine, with STAR track+vertex efficiencies
    folded into the MC.  Its MEAN survives the normalisation and is compared here.
    MC_PP200_MULT is generator level (no efficiency, no data), for the world-value leg.
-tune         <Nch>MC <Nch>dat   ratio | dNch/deta   (NSD)  pT>0.2  NSDfrac | hand dNch/deta
-ours           4.113    2.731   1.506 |     3.521   4.411   2.870    0.658 |          3.512
-monash         3.161    2.731   1.158 |     2.645   3.300   2.139    0.659 |          2.641
-mdc2           2.406    2.731   0.881 |     1.724   2.133   1.468    0.612 |          1.718
-mdc2_nolim     2.536    2.731   0.929 |     1.961   2.422   1.599    0.639 |              -
-w1             2.686    2.731   0.984 |     2.165   2.680   1.750    0.649 |          2.182
+tune         <Nch>MC <Nch>dat   ratio |  eta<0.5  eta<1.0   (NSD)  pT>0.2  NSDfrac |    hand
+ours           4.113    2.731   1.506 |    3.521    3.567   4.411   2.870    0.658 |   3.512
+monash         3.161    2.731   1.158 |    2.645    2.687   3.300   2.139    0.659 |   2.641
+mdc2           2.406    2.731   0.881 |    1.724    1.746   2.133   1.468    0.612 |   1.718
+mdc2_nolim     2.536    2.731   0.929 |    1.961    1.989   2.422   1.599    0.639 |       -
+w1             2.686    2.731   0.984 |    2.165    2.206   2.680   1.750    0.649 |   2.182
+   eta<0.5 and eta<1.0 are both dNch/deta AVERAGED over that window, inelastic;
+   |eta|<1.0 is the acceptance PHOBOS quote, and is 1.3-1.9% above the |eta|<0.5 value.
    NSDfrac is the STAR BBC coincidence fraction (>=1 charged in -5.0<eta<-3.3 AND in
    3.3<eta<5.0); the hand-rolled code called an event NSD by Pythia process code
    (not 103/104), which gave 0.778-0.779 for every tune.  The NSD DEFINITION is thus
    itself a convention worth about 0.12-0.17 in accepted fraction.
-   World anchor for A4: dNch/deta(|eta|<0.5) = 2.2-2.4 (the band pre-registered in the
-   handover; the pipeline session supplies PHOBOS 2.29 +- 0.08 inelastic and PHENIX
-   2.38 +- 0.17, NOT independently verified in this session).  No Rivet routine on this
-   box carries a pp 200 GeV dN/deta reference, so this leg is a GENERATOR-LEVEL number
-   against published values, not a Rivet confrontation.
+   WORLD ANCHORS (corrected 2026-09-05 by the pipeline session, which checked the
+   primary sources after this table's first version quoted the handover's band):
+     PHOBOS PRC 83 024913 (arXiv:1011.1940) Table IV, INELASTIC pp 200 GeV,
+       dNch/deta(|eta|<1) = 2.25 +0.37/-0.30 (90% C.L. systematic).
+     PHENIX PRC 93 024901 Table I, 2.38 +- 0.17, is MINIMUM-BIAS i.e. BBC-TRIGGERED
+       (trigger efficiency 54.8 +- 5.3% of inelastic) -- a per-triggered-event value,
+       NOT an inelastic one, so it is not comparable to the inelastic column here.
+     The '2.29 +- 0.08 inelastic' figure quoted in the handover is not a PHOBOS number;
+       it is most likely UA5 pbar-p NSD (HEPData ins233599).  Treat as unverified.
+   The pre-registered 2.2-2.4 INELASTIC band was therefore narrower than any
+   measurement supports, and its upper leg was class-mismatched.  Against the verified
+   inelastic anchor, acceptance-matched: w1 gives 2.206 over |eta|<1 against PHOBOS
+   2.25 +0.37/-0.30, i.e. -2.0% and well inside the measurement's uncertainty.
+   No Rivet routine on this box carries a pp 200 GeV dN/deta reference, so this leg is
+   a GENERATOR-LEVEL number against published values, not a Rivet confrontation.
 
 == E: mdc2 decay-handling control ==
    island_post/official_pp_mb_mdc2.cfg sets ParticleDecays:limitTau0 = on with

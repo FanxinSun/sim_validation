@@ -206,6 +206,10 @@ def main():
         S[(t, "dnde_nsd")]    = float(d["/MC_PP200_MULT/nch05_nsd"].val())
         S[(t, "dndept_inel")] = float(d["/MC_PP200_MULT/nch05pt_inel"].val())
         S[(t, "nsd_frac")]    = float(d["/MC_PP200_MULT/n_nsd"].val() / d["/MC_PP200_MULT/n_inel"].val())
+        # |eta| < 1 average, the acceptance PHOBOS quote, from the same histogram.
+        xe, we, ve, _ = vals(d["/MC_PP200_MULT/eta_inel"])
+        m1 = np.abs(xe) < 1.0
+        S[(t, "dnde_eta1")] = float(np.sum(ve[m1] * we[m1]) / 2.0)
 
     # ------------------------------------------------------------ the table
     o = []
@@ -347,23 +351,35 @@ def main():
     A("   folded into the MC.  Its MEAN survives the normalisation and is compared here.")
     A("   MC_PP200_MULT is generator level (no efficiency, no data), for the world-value leg.")
     A(f"{'tune':11s} {'<Nch>MC':>8s} {'<Nch>dat':>8s} {'ratio':>7s} | "
-      f"{'dNch/deta':>9s} {'(NSD)':>7s} {'pT>0.2':>7s} {'NSDfrac':>8s} | {'hand dNch/deta':>14s}")
+      f"{'eta<0.5':>8s} {'eta<1.0':>8s} {'(NSD)':>7s} {'pT>0.2':>7s} {'NSDfrac':>8s} | {'hand':>7s}")
     for t in TUNES:
         hd = HAND_DNDE.get(t)
-        hds = f"{hd:14.3f}" if hd else f"{'-':>14s}"
+        hds = f"{hd:7.3f}" if hd else f"{'-':>7s}"
         A(f"{t:11s} {S[(t,'s08_meanNch_mc')]:8.3f} {S[(t,'s08_meanNch_data')]:8.3f} "
           f"{S[(t,'s08_meanNch_mc')]/S[(t,'s08_meanNch_data')]:7.3f} | "
-          f"{S[(t,'dnde_inel')]:9.3f} {S[(t,'dnde_nsd')]:7.3f} {S[(t,'dndept_inel')]:7.3f} "
-          f"{S[(t,'nsd_frac')]:8.3f} | {hds}")
+          f"{S[(t,'dnde_inel')]:8.3f} {S[(t,'dnde_eta1')]:8.3f} {S[(t,'dnde_nsd')]:7.3f} "
+          f"{S[(t,'dndept_inel')]:7.3f} {S[(t,'nsd_frac')]:8.3f} | {hds}")
+    A("   eta<0.5 and eta<1.0 are both dNch/deta AVERAGED over that window, inelastic;")
+    A("   |eta|<1.0 is the acceptance PHOBOS quote, and is 1.3-1.9% above the |eta|<0.5 value.")
     A("   NSDfrac is the STAR BBC coincidence fraction (>=1 charged in -5.0<eta<-3.3 AND in")
     A("   3.3<eta<5.0); the hand-rolled code called an event NSD by Pythia process code")
     A("   (not 103/104), which gave 0.778-0.779 for every tune.  The NSD DEFINITION is thus")
     A("   itself a convention worth about 0.12-0.17 in accepted fraction.")
-    A("   World anchor for A4: dNch/deta(|eta|<0.5) = 2.2-2.4 (the band pre-registered in the")
-    A("   handover; the pipeline session supplies PHOBOS 2.29 +- 0.08 inelastic and PHENIX")
-    A("   2.38 +- 0.17, NOT independently verified in this session).  No Rivet routine on this")
-    A("   box carries a pp 200 GeV dN/deta reference, so this leg is a GENERATOR-LEVEL number")
-    A("   against published values, not a Rivet confrontation.")
+    A("   WORLD ANCHORS (corrected 2026-09-05 by the pipeline session, which checked the")
+    A("   primary sources after this table's first version quoted the handover's band):")
+    A("     PHOBOS PRC 83 024913 (arXiv:1011.1940) Table IV, INELASTIC pp 200 GeV,")
+    A("       dNch/deta(|eta|<1) = 2.25 +0.37/-0.30 (90% C.L. systematic).")
+    A("     PHENIX PRC 93 024901 Table I, 2.38 +- 0.17, is MINIMUM-BIAS i.e. BBC-TRIGGERED")
+    A("       (trigger efficiency 54.8 +- 5.3% of inelastic) -- a per-triggered-event value,")
+    A("       NOT an inelastic one, so it is not comparable to the inelastic column here.")
+    A("     The '2.29 +- 0.08 inelastic' figure quoted in the handover is not a PHOBOS number;")
+    A("       it is most likely UA5 pbar-p NSD (HEPData ins233599).  Treat as unverified.")
+    A("   The pre-registered 2.2-2.4 INELASTIC band was therefore narrower than any")
+    A("   measurement supports, and its upper leg was class-mismatched.  Against the verified")
+    A("   inelastic anchor, acceptance-matched: w1 gives 2.206 over |eta|<1 against PHOBOS")
+    A("   2.25 +0.37/-0.30, i.e. -2.0% and well inside the measurement's uncertainty.")
+    A("   No Rivet routine on this box carries a pp 200 GeV dN/deta reference, so this leg is")
+    A("   a GENERATOR-LEVEL number against published values, not a Rivet confrontation.")
     A("")
 
     A("== E: mdc2 decay-handling control ==")
