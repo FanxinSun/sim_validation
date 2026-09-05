@@ -85,12 +85,19 @@ STAR_HAND_WINDOW = {"pi": (0.35, 2.75), "p": (0.42, 3.88)}
 
 # ---------------------------------------------------------------- yoda helpers
 def vals(obj):
-    """(xmid, xwidth, value) arrays for a binned YODA object, NaN where unfilled."""
+    """(xmid, xwidth, value, err) arrays for a binned YODA object, NaN where unfilled."""
     bs = list(obj.bins())
     x = np.array([b.xMid() for b in bs], dtype=float)
     w = np.array([b.xWidth() for b in bs], dtype=float)
     v = np.array([(b.val() if b.val() is not None else np.nan) for b in bs], dtype=float)
-    return x, w, v
+    e = np.array([(b.totalErrAvg() if b.val() is not None else np.nan) for b in bs], dtype=float)
+    return x, w, v, e
+
+
+def mean_err(err):
+    """MC statistical uncertainty on the plain mean over bins (bins independent)."""
+    ok = np.isfinite(err)
+    return float(np.sqrt(np.nansum(err[ok]**2)) / ok.sum()) if ok.sum() else np.nan
 
 
 def mean_ratio(ratio):
@@ -113,20 +120,25 @@ def species_ratio(mc, ref, keypairs, refpairs=None, window=None, centre=False, d
     otherwise the routine's own bin-averaged invariant quantity is used.
     """
     refpairs = refpairs or keypairs
-    X, W, RAT = [], [], []
+    X, W, RAT, ERR = [], [], [], []
     for (kp, km), (rkp, rkm) in zip(keypairs, refpairs):
         gp = vals(mc[kp]); gm = vals(mc[km])
         rp = vals(ref[rkp]); rm = vals(ref[rkm])
         x, w = rp[0], rp[1]
         ygen = 0.5 * (gp[2] + gm[2])
+        egen = 0.5 * np.sqrt(gp[3]**2 + gm[3]**2)      # MC statistical, charge-averaged
         if centre:
             ygen = ygen / (2 * math.pi * x * dy)
+            egen = egen / (2 * math.pi * x * dy)
         ydat = 0.5 * (rp[2] + rm[2])
-        X.append(x); W.append(w); RAT.append(ygen / ydat)
-    x = np.concatenate(X); w = np.concatenate(W); ratio = np.concatenate(RAT)
+        X.append(x); W.append(w); RAT.append(ygen / ydat); ERR.append(egen / ydat)
+    x = np.concatenate(X); w = np.concatenate(W)
+    ratio = np.concatenate(RAT); err = np.concatenate(ERR)
     if window is not None:
-        ratio = np.where((x >= window[0]) & (x <= window[1]), ratio, np.nan)
-    return x, w, ratio
+        keep = (x >= window[0]) & (x <= window[1])
+        ratio = np.where(keep, ratio, np.nan)
+        err = np.where(keep, err, np.nan)
+    return x, w, ratio, err
 
 
 def hand_rolled(path):
@@ -184,8 +196,8 @@ def main():
             R[(t, "STAR06", sp, "win")]  = species_ratio(mc_s06, ref_s06, inv,
                                                          window=STAR_HAND_WINDOW[sp])
         # STAR_2008: shape-only. Mean of the unit-normalised multiplicity distribution.
-        xm, wm, vm = vals(d["/STAR_2008_I793126/d01-x01-y01"])
-        xr, wr, vr = vals(ref_s08["d01-x01-y01"])
+        xm, wm, vm, _ = vals(d["/STAR_2008_I793126/d01-x01-y01"])
+        xr, wr, vr, _ = vals(ref_s08["d01-x01-y01"])
         okm, okr = np.isfinite(vm), np.isfinite(vr)
         S[(t, "s08_meanNch_mc")]   = float(np.sum(xm[okm] * vm[okm] * wm[okm]) / np.sum(vm[okm] * wm[okm]))
         S[(t, "s08_meanNch_data")] = float(np.sum(xr[okr] * vr[okr] * wr[okr]) / np.sum(vr[okr] * wr[okr]))
@@ -240,20 +252,29 @@ def main():
     A("")
 
     A("== A: PHENIX PRC 83 064903, |y|<0.35, invariant cross section, canonical ==")
-    A(f"{'tune':11s} {'sp':3s} {'mean':>7s} {'low':>7s} {'high':>7s} {'nbins':>6s}   "
-      f"{'hand':>7s} {'hand.lo':>7s} {'hand.hi':>7s}   {'d(mean)':>8s}  flag")
+    A("   stat = MC statistical uncertainty on the mean ratio (300k events).  A d(mean)")
+    A("   larger than 0.05 is only meaningful if it also exceeds this; see the flag column.")
+    A(f"{'tune':11s} {'sp':3s} {'mean':>7s} {'stat':>6s} {'low':>7s} {'high':>7s} {'nbins':>6s}   "
+      f"{'hand':>7s} {'hand.lo':>7s} {'hand.hi':>7s}   {'d(mean)':>8s} {'d/stat':>7s}  flag")
     for t in TUNES:
         for sp in ("pi", "K", "p"):
             m, lo, hi, n = mean_ratio(R[(t, "PHENIX", sp, "y")][2])
+            se = mean_err(R[(t, "PHENIX", sp, "y")][3])
             h = HAND.get((t, "PHENIX", sp))
             if h:
                 d = m - h[0]
-                flag = "FLAG" if abs(d) > 0.05 else "ok"
-                A(f"{t:11s} {sp:3s} {m:7.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
-                  f"{h[0]:7.3f} {h[1]:7.3f} {h[2]:7.3f}   {d:+8.3f}  {flag}")
+                nsig = d / se if se > 0 else np.nan
+                flag = "FLAG" if (abs(d) > 0.05 and abs(nsig) > 2) else (
+                       "stat" if abs(d) > 0.05 else "ok")
+                A(f"{t:11s} {sp:3s} {m:7.3f} {se:6.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
+                  f"{h[0]:7.3f} {h[1]:7.3f} {h[2]:7.3f}   {d:+8.3f} {nsig:+7.1f}  {flag}")
             else:
-                A(f"{t:11s} {sp:3s} {m:7.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
-                  f"{'-':>7s} {'-':>7s} {'-':>7s}   {'-':>8s}  (no hand-rolled counterpart)")
+                A(f"{t:11s} {sp:3s} {m:7.3f} {se:6.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
+                  f"{'-':>7s} {'-':>7s} {'-':>7s}   {'-':>8s} {'-':>7s}  (no hand-rolled counterpart)")
+    A("   flag: FLAG = differs by more than 0.05 AND by more than 2 MC sigma;")
+    A("         stat = differs by more than 0.05 but is within 2 MC sigma, i.e. the 0.05")
+    A("                threshold is below this row's statistical resolution;")
+    A("         ok   = agrees within 0.05.")
     A("")
 
     A("== B: the same PHENIX comparison under each single convention change ==")
@@ -283,21 +304,26 @@ def main():
     A("   Same data as the hand-rolled STAR column, so d(mean) is a convention difference.")
     A("   p    = inclusive p/pbar, as published (the paper states no feed-down treatment)")
     A("   p_fd = the same with hyperon-ancestor protons removed (the hand-rolled definition)")
-    A(f"{'tune':11s} {'sp':5s} {'mean':>7s} {'low':>7s} {'high':>7s} {'nbins':>6s}   "
-      f"{'hand':>7s} {'hand.lo':>7s} {'hand.hi':>7s}   {'d(mean)':>8s}  {'cen':>7s}  flag")
+    A(f"{'tune':11s} {'sp':5s} {'mean':>7s} {'stat':>6s} {'low':>7s} {'high':>7s} {'nbins':>6s}   "
+      f"{'hand':>7s} {'hand.lo':>7s} {'hand.hi':>7s}   {'d(mean)':>8s} {'d/stat':>7s} {'cen':>7s}  flag")
     for t in TUNES:
         for sp in ("pi", "K", "p", "p_fd"):
             m, lo, hi, n = mean_ratio(R[(t, "STAR05", sp, "y")][2])
-            mc = mean_ratio(R[(t, "STAR05", sp, "cen")][2])[0]
+            se = mean_err(R[(t, "STAR05", sp, "y")][3])
+            mcv = mean_ratio(R[(t, "STAR05", sp, "cen")][2])[0]
             h = HAND.get((t, "STAR", "p" if sp == "p_fd" else sp))
             if h:
                 d = m - h[0]
-                flag = "FLAG" if abs(d) > 0.05 else "ok"
-                A(f"{t:11s} {sp:5s} {m:7.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
-                  f"{h[0]:7.3f} {h[1]:7.3f} {h[2]:7.3f}   {d:+8.3f}  {mc:7.3f}  {flag}")
+                nsig = d / se if se > 0 else np.nan
+                flag = "FLAG" if (abs(d) > 0.05 and abs(nsig) > 2) else (
+                       "stat" if abs(d) > 0.05 else ("ok*" if abs(nsig) > 2 else "ok"))
+                A(f"{t:11s} {sp:5s} {m:7.3f} {se:6.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
+                  f"{h[0]:7.3f} {h[1]:7.3f} {h[2]:7.3f}   {d:+8.3f} {nsig:+7.1f} {mcv:7.3f}  {flag}")
             else:
-                A(f"{t:11s} {sp:5s} {m:7.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
-                  f"{'-':>7s} {'-':>7s} {'-':>7s}   {'-':>8s}  {mc:7.3f}  (no hand-rolled counterpart)")
+                A(f"{t:11s} {sp:5s} {m:7.3f} {se:6.3f} {lo:7.3f} {hi:7.3f} {n:6d}   "
+                  f"{'-':>7s} {'-':>7s} {'-':>7s}   {'-':>8s} {'-':>7s} {mcv:7.3f}  (no hand-rolled counterpart)")
+    A("   ok* = within the 0.05 threshold but more than 2 MC sigma from the hand-rolled")
+    A("         value: a real, small, systematic offset (the NSD definition).")
     A("   The hand-rolled STAR column used the hyperon-excluded proton definition, so the")
     A("   p_fd row is its like-for-like counterpart; the p row shows the size of that choice.")
     A("")
@@ -380,7 +406,7 @@ def main():
         ax = axes[c]
         ax.axhline(1, color="k", lw=0.8)
         for t in TUNES:
-            x, w, r = R[(t, "PHENIX", sp, "y")]
+            x, w, r, _e = R[(t, "PHENIX", sp, "y")]
             ok = np.isfinite(r)
             ax.plot(x[ok], r[ok], "-o", ms=3, color=COLORS[t], label=t if c == 0 else None)
         ax.set_ylim(0.3, 3.0)
@@ -398,7 +424,7 @@ def main():
         ax = axes[c]
         ax.axhline(1, color="k", lw=0.8)
         for t in TUNES:
-            x, w, r = R[(t, "STAR05", sp, "y")]
+            x, w, r, _e = R[(t, "STAR05", sp, "y")]
             ok = np.isfinite(r)
             ax.plot(x[ok], r[ok], "-o", ms=3, color=COLORS[t], label=t if c == 0 else None)
         ax.set_ylim(0.0, 2.5)
@@ -413,10 +439,10 @@ def main():
     plt.close(fig)
 
     fig, ax = plt.subplots(1, 1, figsize=(5.2, 4.2))
-    xr, wr, vr = vals(ref_s08["d01-x01-y01"])
+    xr, wr, vr, _ = vals(ref_s08["d01-x01-y01"])
     ax.step(xr, vr, where="mid", color="k", lw=1.2, label="STAR data")
     for t in TUNES:
-        xm, wm, vm = vals(D[t]["/STAR_2008_I793126/d01-x01-y01"])
+        xm, wm, vm, _ = vals(D[t]["/STAR_2008_I793126/d01-x01-y01"])
         ax.step(xm, vm, where="mid", color=COLORS[t], lw=1.0, label=t)
     ax.set_yscale("log"); ax.set_xlabel("$N_{ch}$ ($|\\eta|<0.5$, $p_T>0.2$ GeV/$c$)")
     ax.set_ylabel("normalised $P(N_{ch})$")
