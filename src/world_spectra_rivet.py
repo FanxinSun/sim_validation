@@ -32,7 +32,7 @@ except ImportError:
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 VDIR = os.path.realpath(os.path.join(HERE, ".."))
-REPO = "/home/rog/sPHENIX/3D_ClusterFindingML"
+REPO = "/home/rog/sPHENIX/TPC_Sim_Pipeline"
 YDIR = os.path.join(REPO, "P5", "angantyr", "yoda")
 OURREF = os.path.join(REPO, "P5", "angantyr", "rivet", "PHENIX_2011_I886590.yoda")
 RIVETSHARE = "/home/rog/sw/rivet-4.1.3/share/Rivet"

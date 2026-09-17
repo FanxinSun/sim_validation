@@ -41,7 +41,7 @@ static const char *VDIR()
 }
 
 void funny_shapes(const char *realpix =
-                      "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                      "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
                   const char *simpix = "digi_frames_production_v40b.root",
                   int realevent = 74, int simlayer = 15, int simframe = -1, int reallayer = -1,
                   double philo = 0.0, double phihi = 1.0, int tlo = 600, int thi = 800,

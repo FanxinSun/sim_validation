@@ -103,8 +103,8 @@ bool tangentAtR(const Fit &F, double r0, double hx, double hy,
 // 3-sigma-clipped core sigma + clipped-tail fraction (separates hadronic-kink
 // tails from the Gaussian MS core) and stat errors sigma/sqrt(2N). Writes
 // under its own tag — the sealed v53 outputs remain era records.
-void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
-               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/TPC_Sim_Pipeline/P5/PP_g4hit_%d.root",
+               const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
                const char *ver = "v61", const char *vtag = "V6.1",
                double r0 = 35.0)
 {
@@ -355,7 +355,7 @@ void ms_split(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFin
 // ms_split() before the rename. Highland theta0 is quoted as an ORDER scale only; the
 // quantitative checks are the 1/p scaling and the split stability.
 // Track sample: fixed full-crosser selection for all r0 (apples-to-apples).
-void ms_r0scan(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
+void ms_r0scan(int ng4 = 10, const char *g4pat = "/home/rog/sPHENIX/TPC_Sim_Pipeline/P5/PP_g4hit_%d.root",
                 const char *ver = "v61", const char *vtag = "V6.1")
 {
   using namespace MSD;

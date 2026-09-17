@@ -15,7 +15,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 HERE = os.path.dirname(os.path.abspath(__file__)); VDIR = os.path.realpath(os.path.join(HERE, ".."))
-REPO = "/home/rog/sPHENIX/3D_ClusterFindingML"; GEN = os.path.join(REPO, "P5/angantyr")  # fresh gen_world outputs; archived runs live in <checkout>/ledgers/world_scan
+REPO = "/home/rog/sPHENIX/TPC_Sim_Pipeline"; GEN = os.path.join(REPO, "P5/angantyr")  # fresh gen_world outputs; archived runs live in <checkout>/ledgers/world_scan
 DATA = os.path.join(REPO, "external_data/world_pp200_spectra"); SIG_INEL = 42.0
 tag = sys.argv[1] if len(sys.argv) > 1 else "v7pre"; tunes = sys.argv[2:] or ["ours", "monash", "mdc2"]
 DPT = 0.05; NB = 100; PTC = (np.arange(NB) + 0.5) * DPT

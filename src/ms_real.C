@@ -175,8 +175,8 @@ bool splitClus(CT &T, double r0, double &out,
 }
 }  // namespace MSR
 
-void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-             const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+void ms_real(const char *realf = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
+             const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
              const char *ver = "v61", const char *vtag = "V6.1",
              double r0 = 49.0)
 {
@@ -366,8 +366,8 @@ void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters
 // Then the pT-window circle comparison is REDONE on cleaned tracks
 // (full-crosser gates on survivors), giving purified data/MC ratios.
 // Output: plots/ms_realcheck_<ver>.png + ledgers/ms_realcheck_<ver>.txt
-void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+void ms_realcheck(const char *realf = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                  const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
                   const char *ver = "v61", const char *vtag = "V6.1",
                   double rescut = 0.30)
 {
@@ -573,8 +573,8 @@ void ms_realcheck(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clu
 // Outputs: plots/ms_real_split_<ver>.png
 //          plots/ms_real_showcase_<ver>.png
 //          ms_real_split_<ver>.txt
-void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-                   const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+void ms_real_split(const char *realf = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                   const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
                    const char *ver = "v61", const char *vtag = "V6.1",
                    double r0 = 49.0)
 {
@@ -857,8 +857,8 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
 // (x0, y0) extracted by linear least squares on tracks with |d0s| < 8 cm;
 // medians per bin are used for display robustness against secondaries.
 // Output: plots/ms_d0diag_<ver>.png + ledgers/ms_d0diag_<ver>.txt
-void ms_d0diag(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
-               const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+void ms_d0diag(const char *realf = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
+               const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
                const char *ver = "v61", const char *vtag = "V6.1")
 {
   using namespace MSR;

@@ -82,7 +82,7 @@ void cluster_shapes_cmp(const char *suffix = "",
 {
   CSC::SIMTAG = tag;
   gROOT->SetBatch(1); gStyle->SetOptStat(0); gStyle->SetTitleFontSize(0.055);
-  const char *REALNT = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root";
+  const char *REALNT = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root";
 
   // ---------- [1] production semantics ----------
   TFile *fr = TFile::Open(REALNT);

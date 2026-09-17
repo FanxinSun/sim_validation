@@ -1,8 +1,8 @@
 // -------------------------------------------------------------------------
-// MIRROR of the pipeline repo's island_post/canon.h (3D_ClusterFindingML).
+// MIRROR of the pipeline repo's island_post/canon.h (TPC_Sim_Pipeline).
 // Vendored here so this checkout's macros build standalone; that copy stays
 // canonical. Keep the two in sync — after editing either side, check with
-//   diff <(tail -n +7 include/canon.h) ../3D_ClusterFindingML/island_post/canon.h
+//   diff <(tail -n +7 include/canon.h) ../TPC_Sim_Pipeline/island_post/canon.h
 // -------------------------------------------------------------------------
 // canon.h — CANONICAL conventions for every comparison figure/analysis in island_post.
 // Conventions live HERE as code, never re-derived from memory in individual macros.

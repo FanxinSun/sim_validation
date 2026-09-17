@@ -123,7 +123,7 @@ void stats(const std::vector<double> &v, double &sig, double &err, double &core)
 }
 bool loadLayerRadii(double layerR[55])
 {
-  FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
+  FILE *fp = fopen("/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/tpc_geom_table.txt", "r");
   if (!fp) { printf("no tpc_geom_table.txt\n"); return false; }
   char line[512];
   while (fgets(line, sizeof line, fp))
@@ -141,8 +141,8 @@ const int CIDE = kBlue + 1, CDIS = kRed + 1;    // ideal solid blue, field-on da
 
 // ---------------------------------------------------------------------------
 // CLUSTER LEVEL: island91 ideal vs field-on, truth-grouped tracks.
-void fc_clusters(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6ideal.root",
-                 const char *dist = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v6.root",
+void fc_clusters(const char *ideal = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v6ideal.root",
+                 const char *dist = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v6.root",
                  const char *ver = "v6")
 {
   using namespace MFC;
@@ -328,8 +328,8 @@ void fc_clusters(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/isla
 // ---------------------------------------------------------------------------
 // PIXEL LEVEL: digi ideal vs field-on, per-pixel-truth-grouped tracks;
 // whole-track (global) vs 4-adjacent-layer local (short-sagitta) fits.
-void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6ideal.root",
-               const char *dist = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root",
+void fc_pixels(const char *ideal = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/digi_frames_production_v6ideal.root",
+               const char *dist = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/digi_frames_production_v6.root",
                int nsim = 60, const char *ver = "v6")
 {
   using namespace MFC;

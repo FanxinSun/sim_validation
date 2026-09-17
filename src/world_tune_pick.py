@@ -12,7 +12,7 @@ sys.path.insert(0, HERE)
 import importlib.util
 spec = importlib.util.spec_from_file_location("wsc", os.path.join(HERE, "world_spectra_confront.py"))
 # reuse loaders without executing the script body: re-implement the small pieces here
-REPO = "/home/rog/sPHENIX/3D_ClusterFindingML"; GEN = os.path.join(REPO, "P5/angantyr")  # fresh gen_world outputs; archived runs live in <checkout>/ledgers/world_scan; DATA = os.path.join(REPO, "external_data/world_pp200_spectra")
+REPO = "/home/rog/sPHENIX/TPC_Sim_Pipeline"; GEN = os.path.join(REPO, "P5/angantyr")  # fresh gen_world outputs; archived runs live in <checkout>/ledgers/world_scan; DATA = os.path.join(REPO, "external_data/world_pp200_spectra")
 SIG = 42.0; DPT = 0.05; NB = 100; PTC = (np.arange(NB) + 0.5) * DPT
 DNDE_T, DNDE_E = 2.33, 0.12
 tag = sys.argv[1] if len(sys.argv) > 1 else "v7scan"; prefix = sys.argv[2] if len(sys.argv) > 2 else "scan_"

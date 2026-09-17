@@ -91,8 +91,8 @@ double wrapphi(double d)
 }  // namespace TCIRC
 
 void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
-                  const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root",
-                  const char *i91 = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/island91_frames_production_v61.root",
+                  const char *g4pat = "/home/rog/sPHENIX/TPC_Sim_Pipeline/P5/PP_g4hit_%d.root",
+                  const char *i91 = "/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/island91_frames_production_v61.root",
                   const char *ver = "v53", const char *vtag = "V6.1")
 {
   using namespace TCIRC;
@@ -101,7 +101,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
   const double RSEL_LO = 101, RSEL_HI = 137;                   // fitted-R window ~ pT 0.45-0.55
   double geoR[55]; int ngeo = 0;
   {
-    FILE *ft = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
+    FILE *ft = fopen("/home/rog/sPHENIX/TPC_Sim_Pipeline/island_post/tpc_geom_table.txt", "r");
     if (!ft) { printf("no tpc_geom_table.txt (run from island_post/)\n"); return; }
     char line[512];
     while (fgets(line, sizeof line, ft))

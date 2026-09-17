@@ -72,7 +72,7 @@ void residual_fingerprint(double s = 0.6974,   // NR default 99: the real as-rec
                           const char *simfile = "digi_frames_production_v40b.root",
                           const char *simz = "z", const char *suffix = "",
                           const char *tag = "SIM v4.0",
-                          const char *realfile = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root",
+                          const char *realfile = "/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root",
                           double NR = 99.)
 {
   RFP::SIMTAG = tag;

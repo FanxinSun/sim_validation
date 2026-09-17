@@ -12,7 +12,7 @@
 # =============================================================================
 set -eo pipefail
 
-ROOTDIR=/home/rog/sPHENIX/3D_ClusterFindingML
+ROOTDIR=/home/rog/sPHENIX/TPC_Sim_Pipeline
 P5=$ROOTDIR/P5
 GEN=$P5/angantyr
 IP=$ROOTDIR/island_post

@@ -49,7 +49,7 @@ void p3_cmp3(const char *simfile = "digi_frames_production_v53.root",
   std::set<int> evset;  // complete-62 event ids (island filter)
   {  // real all-99 pixels (as recorded, laser event 44 vetoed — 2026-08-19 fix:
      // this block had read the raw ntuplizer without the veto)
-    TFile *f = TFile::Open("/home/rog/sPHENIX/3D_ClusterFindingML/clusters_seeds_island_79507-0.root_ntuplizer.root");
+    TFile *f = TFile::Open("/home/rog/sPHENIX/TPC_Sim_Pipeline/clusters_seeds_island_79507-0.root_ntuplizer.root");
     TTree *t = (TTree *) f->Get("ntp_hit");
     float lay, adc, tb, evr;
     t->SetBranchStatus("*", 0);
