@@ -1,0 +1,15 @@
+[nf_digipix v61o] MATCHED pixel level: sim DIGI pixels (/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v61.root, truth-grouped) vs real pixels (tracker-grouped)
+  real: 4836 tracks (124 px/track) | GLOBAL RMS med 2358 um | LOCAL (4-row) med 1205 um (134742/191216 windows, 70%)
+  sim : 23938 tracks (265 px/track) | GLOBAL RMS med 1549 um | LOCAL (4-row) med 1333 um (791741/936960 windows, 85%)
+  data/MC: GLOBAL 1.52 | LOCAL 0.90   (supervisor test: matched local = response ratio)
+  global-vs-local gap: real 2358 -> 1205 | sim 1549 -> 1333  (the removed part = each side's long-range share)
+[nf_sag_hits v61o] HIT-level SHORT-SAGITTA local fits: 4 adjacent pad rows, 45 sliding windows
+  sample = tracks passing the nf_hits GLOBAL bar; window gate >=3 distinct rows, n>=5
+  real: 4836 tracks -> 134742/191216 windows fittable (70%) | local RMS med 1205 um | n/window med 12
+  sim : 253600 tracks -> 6838281/9701795 windows fittable (70%) | local RMS med 1.02 um | n/window med 6
+  (sim fittable fraction limited by G4 ~1 cm stepping: 3-6 truth pts per window;
+   local RMS suppressed by sqrt((n-3)/n) dof factor: real ~0.87, sim ~0.63)
+[nf_hits v61o] HIT level, NO finder; bar >=12 pts, span >=15 cm, R_fit >=45 cm, raw fit
+  sim ntp_g4hit truth-grouped: 18124 collisions -> 253600 tracks | RMS med 30.2 um | R med 101 cm
+  real ntp_hit tracker-grouped (road dxy<1.2 cm, |dtbin|<=6): 6138 seeds -> 4836 tracks (124 px/track mean) | RMS med 2358 um | R med 93 cm
+  gap = the detector: diffusion + pad/tbin quantization (no centroiding at pixel level)

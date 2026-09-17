@@ -1,0 +1,11 @@
+# fieldmeter_cmcheck_v6tf.txt — V6-TWIST artifacts (island91_frames_production_v6.root, md5 237107f3) under the shared converged fitter, 2026-09-11
+# same invocations as fieldmeter_cmcheck_v61f.txt (v6.1 counterpart)
+FM0 RMS v6tf: n05 694 med05 692.2 | nHi 56 medHi 626.0
+FM0 D0  v6tf: n 3271 rms 2.987 med|d0| 2.209
+FM0 PROF v6tf: +1.39 +0.15 -0.16 +0.89 +0.17 -0.14 +1.43 nan nan nan nan nan   (bin centers 40,120,...,920; n: 350 734 864 387 617 304 15 0 0 0 0 0)
+FM1 RMS v6tf: n05 13094 med05 907.1 | nHi 980 medHi 728.1
+FM1 D0  v6tf: n 59464 rms 3.034 med|d0| 2.224
+FM1 PROF v6tf: +0.07 +0.03 +0.08 +0.03 +0.09 +0.08 +0.04 +0.07 +0.09 +0.03 +0.05 +0.18   (bin centers 40,120,...,920; n: 3285 6014 6216 5005 4904 5073 5108 5119 5196 5112 4938 3494)
+CMC v6tf: full-crossers 64984 | side-crossers 779 (1.2%)
+CMC v6tf CMJUMP: n 778 | med|J| 0.473 cm | width(q68) 0.681 cm
+CMC v6tf HALFARC: n 63824 dk-width 0.4602 | n05 12970 dk05-width 0.5093

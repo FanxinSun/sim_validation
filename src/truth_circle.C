@@ -47,6 +47,7 @@
 #include <TString.h>
 #include <climits>
 #include <cstdlib>
+#include "../include/circlefit.h"
 // checkout root of THIS macro (the directory above src/), resolved absolute at
 // first use: figures land in plots/, ledgers in ledgers/, so the suite runs
 // from ANY cwd against the fixed pipeline data area (absolute input defaults).
@@ -65,68 +66,9 @@ static const char *VDIR()
 
 namespace TCIRC
 {
-struct Fit { double a = 0, b = 0, R = 0, rms = 0; int n = 0; bool ok = false; };
-
-Fit fitCircle(const std::vector<double> &X, const std::vector<double> &Y)
-{
-  Fit F; F.n = (int) X.size();
-  if (F.n < 5) return F;
-  double Sx = 0, Sy = 0, Sxx = 0, Syy = 0, Sxy = 0, Sxz = 0, Syz = 0, Sz = 0;
-  for (size_t i = 0; i < X.size(); ++i)
-  {
-    double x = X[i], y = Y[i], z = x * x + y * y;
-    Sx += x; Sy += y; Sxx += x * x; Syy += y * y; Sxy += x * y;
-    Sxz += x * z; Syz += y * z; Sz += z;
-  }
-  double n = F.n;
-  double det = Sxx * (Syy * n - Sy * Sy) - Sxy * (Sxy * n - Sy * Sx) + Sx * (Sxy * Sy - Syy * Sx);
-  if (std::fabs(det) < 1e-9) return F;
-  double A = (Sxz * (Syy * n - Sy * Sy) - Sxy * (Syz * n - Sy * Sz) + Sx * (Syz * Sy - Syy * Sz)) / det;
-  double B = (Sxx * (Syz * n - Sy * Sz) - Sxz * (Sxy * n - Sy * Sx) + Sx * (Sxy * Sz - Syz * Sx)) / det;
-  double C = (Sxx * (Syy * Sz - Syz * Sy) - Sxy * (Sxy * Sz - Syz * Sx) + Sxz * (Sxy * Sy - Syy * Sx)) / det;
-  F.a = A / 2; F.b = B / 2;
-  double r2 = C + F.a * F.a + F.b * F.b;
-  if (r2 <= 0) return F;
-  F.R = std::sqrt(r2);
-  for (int it = 0; it < 6; ++it)   // geometric refinement
-  {
-    double M[3][3] = {{0}}, v[3] = {0};
-    for (size_t i = 0; i < X.size(); ++i)
-    {
-      double dx = X[i] - F.a, dy = Y[i] - F.b, rho = std::hypot(dx, dy);
-      if (rho < 1e-9) continue;
-      double res = rho - F.R, J[3] = {-dx / rho, -dy / rho, -1.};
-      for (int p = 0; p < 3; ++p)
-      {
-        v[p] -= J[p] * res;
-        for (int q = 0; q < 3; ++q) M[p][q] += J[p] * J[q];
-      }
-    }
-    double d = M[0][0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1])
-             - M[0][1] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])
-             + M[0][2] * (M[1][0] * M[2][1] - M[1][1] * M[2][0]);
-    if (std::fabs(d) < 1e-12) break;
-    double d0 = (v[0] * (M[1][1] * M[2][2] - M[1][2] * M[2][1])
-               - M[0][1] * (v[1] * M[2][2] - M[1][2] * v[2])
-               + M[0][2] * (v[1] * M[2][1] - M[1][1] * v[2])) / d;
-    double d1 = (M[0][0] * (v[1] * M[2][2] - M[1][2] * v[2])
-               - v[0] * (M[1][0] * M[2][2] - M[1][2] * M[2][0])
-               + M[0][2] * (M[1][0] * v[2] - v[1] * M[2][0])) / d;
-    double d2 = (M[0][0] * (M[1][1] * v[2] - v[1] * M[2][1])
-               - M[0][1] * (M[1][0] * v[2] - v[1] * M[2][0])
-               + v[0] * (M[1][0] * M[2][1] - M[1][1] * M[2][0])) / d;
-    F.a += d0; F.b += d1; F.R += d2;
-  }
-  double s2 = 0;
-  for (size_t i = 0; i < X.size(); ++i)
-  {
-    double res = std::hypot(X[i] - F.a, Y[i] - F.b) - F.R;
-    s2 += res * res;
-  }
-  F.rms = std::sqrt(s2 / n);
-  F.ok = true;
-  return F;
-}
+using CircleFit::Fit;   // 2026-09-11: ONE fitter for every meter — include/circlefit.h (converged LM, line in the
+                        // parameter space, old Kasa+6GN result kept as a start and as the non-regression floor)
+inline Fit fitCircle(const std::vector<double> &X, const std::vector<double> &Y) { return CircleFit::fitCircle(X, Y, 5); }
 
 double med(std::vector<double> v)
 {
