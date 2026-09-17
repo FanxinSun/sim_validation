@@ -1,10 +1,10 @@
 [nf_digipix v61f] MATCHED pixel level: sim DIGI pixels (/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v61.root, truth-grouped) vs real pixels (tracker-grouped)
-  real: 4831 tracks (124 px/track) | GLOBAL RMS med 2356 um | LOCAL (4-row) med 1201 um (134661/191021 windows, 70%)
-  sim : 23938 tracks (265 px/track) | GLOBAL RMS med 1549 um | LOCAL (4-row) med 1321 um (791940/936973 windows, 85%)
+  real: 4831 tracks (124 px/track) | GLOBAL RMS med 2356 um | LOCAL (4-layer) med 1201 um (134661/191021 windows, 70%)
+  sim : 23938 tracks (265 px/track) | GLOBAL RMS med 1549 um | LOCAL (4-layer) med 1321 um (791940/936973 windows, 85%)
   data/MC: GLOBAL 1.52 | LOCAL 0.91   (supervisor test: matched local = response ratio)
   global-vs-local gap: real 2356 -> 1201 | sim 1549 -> 1321  (the removed part = each side's long-range share)
-[nf_sag_hits v61f] HIT-level SHORT-SAGITTA local fits: 4 adjacent pad rows, 45 sliding windows
-  sample = tracks passing the nf_hits GLOBAL bar; window gate >=3 distinct rows, n>=5
+[nf_sag_hits v61f] HIT-level SHORT-SAGITTA local fits: 4 adjacent pad layers, 45 sliding windows
+  sample = tracks passing the nf_hits GLOBAL bar; window gate >=3 distinct layers, n>=5
   real: 4831 tracks -> 134661/191021 windows fittable (70%) | local RMS med 1201 um | n/window med 12
   sim : 253612 tracks -> 6838519/9702065 windows fittable (70%) | local RMS med 1.02 um | n/window med 6
   (sim fittable fraction limited by G4 ~1 cm stepping: 3-6 truth pts per window;

@@ -38,7 +38,7 @@ D = {}
 for sp, (ap, am, gk, ptmax) in species.items():
     lo, hi, yp, ep = phenix(*ap); _, _, ym, em = phenix(*am)
     m = hi <= ptmax + 1e-9; D[sp] = (lo[m], hi[m], 0.5 * (yp + ym)[m], 0.5 * np.sqrt(ep ** 2 + em ** 2)[m])
-rows = []
+entries = []
 for f in sorted(glob.glob(os.path.join(GEN, f"{prefix}*_world.txt")) + glob.glob(os.path.join(VDIR, "ledgers", "world_scan", f"{prefix}*_world.txt"))):
     lab = os.path.basename(f)[:-10]; g = load_gen(f); chi = {}; nb = 0
     for sp, (ap, am, gk, ptmax) in species.items():
@@ -48,11 +48,11 @@ for f in sorted(glob.glob(os.path.join(GEN, f"{prefix}*_world.txt")) + glob.glob
         r = yg / yd; ok = np.isfinite(r); h = ok.sum() // 2
         chi[sp + "_r"] = float(np.nanmean(r)); chi[sp + "_lo"] = float(np.nanmean(r[ok][:h])); chi[sp + "_hi"] = float(np.nanmean(r[ok][h:]))
     chi_d = ((g["dnde"] - DNDE_T) / DNDE_E) ** 2; tot = chi["pi"] + chi["K"] + chi["p"] + chi_d
-    rows.append((tot, lab, g, chi, chi_d, nb))
-rows.sort(key=lambda r: r[0])
-out = [f"# world_tune_pick {tag}: chi2 vs PHENIX pi/K/p (|y|<0.35, per inelastic, 5% gen floor) + dNch/deta target {DNDE_T}+-{DNDE_E}; {len(rows)} points"]
+    entries.append((tot, lab, g, chi, chi_d, nb))
+entries.sort(key=lambda r: r[0])
+out = [f"# world_tune_pick {tag}: chi2 vs PHENIX pi/K/p (|y|<0.35, per inelastic, 5% gen floor) + dNch/deta target {DNDE_T}+-{DNDE_E}; {len(entries)} points"]
 out.append(f"{'rank':>4} {'label':38s} {'chi2tot':>8} {'chi2pi':>7} {'chi2K':>7} {'chi2p':>7} {'chi2dn':>7} {'dnde':>6} {'<r>pi':>6} {'<r>K':>6} {'<r>p':>6} {'pi lo/hi':>11} {'K lo/hi':>11} {'eps':>6} {'<pT>':>6}")
-for i, (tot, lab, g, chi, chd, nb) in enumerate(rows):
+for i, (tot, lab, g, chi, chd, nb) in enumerate(entries):
     out.append(f"{i+1:4d} {lab:38s} {tot:8.1f} {chi['pi']:7.1f} {chi['K']:7.1f} {chi['p']:7.1f} {chd:7.1f} {g['dnde']:6.3f} {chi['pi_r']:6.3f} {chi['K_r']:6.3f} {chi['p_r']:6.3f} {chi['pi_lo']:5.2f}/{chi['pi_hi']:4.2f} {chi['K_lo']:5.2f}/{chi['K_hi']:4.2f} {g['eps']:6.3f} {g['meanpt']:6.3f}")
 os.makedirs(os.path.join(VDIR, "ledgers"), exist_ok=True)
 open(os.path.join(VDIR, "ledgers", f"world_tune_pick_{tag}.txt"), "w").write("\n".join(out) + "\n"); print("\n".join(out))

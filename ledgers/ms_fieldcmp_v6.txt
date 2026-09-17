@@ -5,8 +5,8 @@
   FIELD SHARE (quadrature, dist (-) ideal): RMS 0.5GeV 392 um | stiff 394 um | dpsi 0.5GeV 19.7 mrad
   truth-hit level (identical in both by construction): 20 um circle RMS, 1.365 mrad MS
 [fc_pixels v6] SIM-ONLY ideal vs distortion field, digi raw-pixel tracks (60 frames)
-  ideal: 24283 tracks | GLOBAL RMS med 1489 um | LOCAL 4-row med 1334 um (798440/948056 windows)
-  field: 24667 tracks | GLOBAL RMS med 1539 um | LOCAL 4-row med 1337 um (815635/962607 windows)
+  ideal: 24283 tracks | GLOBAL RMS med 1489 um | LOCAL 4-layer med 1334 um (798440/948056 windows)
+  field: 24667 tracks | GLOBAL RMS med 1539 um | LOCAL 4-layer med 1337 um (815635/962607 windows)
   FIELD SHARE: global 392 um in quadrature | local shift 3 um (short-sagitta fit rejects the smooth field by construction)
   NOTE stiff-window sigma(dpsi) 30.8 -> 21.3 mrad (field-on SMALLER): fitted-R
   window migration, not physics. Field-on R_fit smears, so the [357,595] cm

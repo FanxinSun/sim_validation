@@ -37,7 +37,7 @@ inline const char *TPC_CUT = "layer>=7&&layer<=54&&adc>0&&event!=44";
 // observables (drops 1.9% of the time axis). LONG-TERM (queued): inject a transported
 // PHG4TpcCentralMembrane stripe flash in frame_composer -> labeled noise class cls=2.
 inline const char *TPC_CUT_NOLASER = "layer>=7&&layer<=54&&adc>0&&event!=44&&!(tbin>=322&&tbin<=340)";
-// (sim digi zbin==tbin exactly, all rows verified 2026-07-20; hit69 exports carry
+// (sim digi zbin==tbin exactly, all entries verified 2026-07-20; hit69 exports carry
 //  zbin=NaN per the real TPC convention -> cut on tbin, valid for every sim source)
 inline const char *SIM_NOLASER = "!(tbin>=322&&tbin<=340)";  // apply symmetrically to sim
 

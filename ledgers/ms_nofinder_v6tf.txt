@@ -1,5 +1,5 @@
 [nf_digipix v6tf] MATCHED pixel level: sim DIGI pixels (/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root, truth-grouped) vs real pixels (tracker-grouped)
-  real: 4831 tracks (124 px/track) | GLOBAL RMS med 2356 um | LOCAL (4-row) med 1201 um (134661/191021 windows, 70%)
-  sim : 23944 tracks (265 px/track) | GLOBAL RMS med 1587 um | LOCAL (4-row) med 1327 um (792096/937170 windows, 85%)
+  real: 4831 tracks (124 px/track) | GLOBAL RMS med 2356 um | LOCAL (4-layer) med 1201 um (134661/191021 windows, 70%)
+  sim : 23944 tracks (265 px/track) | GLOBAL RMS med 1587 um | LOCAL (4-layer) med 1327 um (792096/937170 windows, 85%)
   data/MC: GLOBAL 1.48 | LOCAL 0.91   (supervisor test: matched local = response ratio)
   global-vs-local gap: real 2356 -> 1201 | sim 1587 -> 1327  (the removed part = each side's long-range share)

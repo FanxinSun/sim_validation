@@ -5,7 +5,7 @@
 // ms_barscan in src/; fieldmeter, cmcheck, pilot_compmeter in island_post/) —
 // Kasa algebraic start + a FIXED number of undamped Gauss-Newton steps with no
 // convergence test.  CODEX (CODEX_REAL_FIT_VALIDATION.md) and the Real-Data-Probe
-// thread (island_post/fitpred_probe.C) showed 2.1% of real and 3.5% of sim 4-row
+// thread (island_post/fitpred_probe.C) showed 2.1% of real and 3.5% of sim 4-layer
 // windows unconverged, with 73% of the sim windows above 3 mm being numerical.
 //
 // What it does (reference: namespace FPP in island_post/fitpred_probe.C, CODEX-
@@ -260,7 +260,7 @@ inline Fit fitCircle(const std::vector<double> &X, const std::vector<double> &Y,
     }
   }
   // start 3: the PCA line — ALWAYS (2026-09-11 check: restricting it to n <= 30 left
-  // 16 of 134,661 real 4-row windows and 96 sim windows short of the multi-start
+  // 16 of 134,661 real 4-layer windows and 96 sim windows short of the multi-start
   // optimum by > 0.1 mm; the extra LM costs ~10 us per fit)
   {
     Curve C; C.th = 0.5 * std::atan2(2 * xy, xx - yy) + M_PI / 2; C.d = 0; C.k = 0;

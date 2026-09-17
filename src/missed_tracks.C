@@ -302,14 +302,14 @@ void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
     t->SetBranchAddress("layer", &lay);
     t->SetBranchAddress("x", &x);
     t->SetBranchAddress("y", &y);
-    long ntrkrows = 0;
+    long ntrkentries = 0;
     for (Long64_t i = 0; i < t->GetEntries(); ++i)
     {
       t->GetEntry(i);
       if ((int) ev == 44) continue;   // V6 laser veto (canon.h)
       if (lay < 7 || lay > 54) continue;
       trkkey.insert(((long long) ev << 40) ^ ((long long) llround(x * 1e3) << 20) ^ (long long) llround(y * 1e3));
-      ntrkrows++;
+      ntrkentries++;
     }
     TTree *c = (TTree *) f->Get("ntp_cluster");
     float tb;
@@ -333,8 +333,8 @@ void missed_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
       nc++;
     }
     f->Close();
-    printf("real: %ld TPC clusters, %ld flagged on-track (clus_trk rows %ld -> match check)\n",
-           nc, nmatch, ntrkrows);
+    printf("real: %ld TPC clusters, %ld flagged on-track (clus_trk entries %ld -> match check)\n",
+           nc, nmatch, ntrkentries);
   }
 
   // ---------- run finder: REAL-UNUSED and REAL-FULL ----------
@@ -712,7 +712,7 @@ void mt_cluscmp(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clust
 // ---------------------------------------------------------------------------
 // mt_g4scan — ITEM 3a (2026-08-06): exhaustive circle search on sim TRUTH
 // hits (ntp_g4hit), per single pp collision. Pseudo-layer = int(r) [cm]
-// (truth steps carry no pad row); drift-coherence coordinate = gz
+// (truth steps carry no pad layer); drift-coherence coordinate = gz
 // (band 5 cm, slope 6 cm per pseudo-layer). Reports the from-first-
 // principles findable track-class rate per collision, against the direct
 // truth-group count under the same acceptance.

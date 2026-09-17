@@ -12,7 +12,7 @@
 // circle fit, pT windows selected by FITTED curvature (no truth in the
 // selection), and the split-arc tangent mismatch.
 // TWO deliberate adaptations vs the truth-hit analysis (ms_split.C):
-//   (1) the split border is r0 = 49 cm, NOT the adopted 35: pad rows begin
+//   (1) the split border is r0 = 49 cm, NOT the adopted 35: pad layers begin
 //       at r = 31.4 cm, so r0=35 leaves <=7 clusters inside — below any fit
 //       gate. 35 is a truth-hit border (hits start at r=20); it cannot be
 //       applied at cluster level.
@@ -287,7 +287,7 @@ void ms_real(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/clusters
   P("ms_real %s — MS split-arc machinery applied to REAL cluster-tracks vs sim (%s)\n", ver, vtag);
   P("real = ntp_clus_trk (event,seedID) tracks; sim = island91 truth-grouped tracks;\n");
   P("selection by FITTED curvature both sides; cluster split border r0 = %.0f cm\n", r0);
-  P("(the truth-hit border 35 cm is unusable on clusters: pad rows begin at 31.4 cm).\n");
+  P("(the truth-hit border 35 cm is unusable on clusters: pad layers begin at 31.4 cm).\n");
   P("track groups: real %ld, sim %ld\n", ngrp[0], ngrp[1]);
   const char *wl[2] = {"pT ~0.5 GeV (R_fit 101-137 cm)", "pT 1.5-2.5 GeV (R_fit 357-596 cm)"};
   for (int w = 0; w < 2; ++w)
@@ -707,7 +707,7 @@ void ms_real_split(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cl
       med(rmsv[0][w]) * 1000, med(rmsv[1][w]) * 1000,
       med(rmsv[1][w]) > 0 ? med(rmsv[0][w]) / med(rmsv[1][w]) : 0);
   }
-  P("truth-level MS for scale: %.2f / %.2f mrad (ms_r0scan v53f, r0=49 row; truth hits bit-identical since) — invisible at cluster level\n",
+  P("truth-level MS for scale: %.2f / %.2f mrad (ms_r0scan v53f, r0=49 entry; truth hits bit-identical since) — invisible at cluster level\n",
     MSTRUTH[0], MSTRUTH[1]);
   P("d0 median real %.2f cm, sim %.2f cm\n", med(d0v[0]), med(d0v[1]));
   P("worst real showcase: |dpsi| = %.1f mrad (largest in the pT~0.5 window)\n", std::fabs(worstDp));

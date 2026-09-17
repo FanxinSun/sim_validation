@@ -10,7 +10,7 @@ under a new tag, with the reason recorded here.
 `residual_fingerprint_v61.png` (2026-08-24 era record) and
 `residual_fingerprint_v61r.png` (its byte-identical 2026-09-05 replot) stay
 byte-frozen as era records and carry a **known defect in panel 6**: the R1, R2,
-R3 and `adc<30` rows were counted with cut strings that lacked the laser veto
+R3 and `adc<30` entries were counted with cut strings that lacked the laser veto
 while being divided by the vetoed event count, so their real legs include real
 event 44 (the GL1 diffuse laser flash) and the bars understate the residual —
 the `total` bar is correct, because it alone was built from `CANON::TPC_CUT`.
@@ -27,11 +27,11 @@ byte-identical to `_v61rc.png`, which is the control that demonstrates it.
 Panels 1–5 are unaffected in every one of these figures: they were always built
 from `CANON::TPC_CUT` / `CANON::TPC_CUT_NOLASER`. A pixel diff of `_v61rfix`
 against `_v61r` finds zero changed pixels in panels 1–5 and all 4382 changed
-pixels inside panel 6. No ledger row is affected either — `ledgers/residuals_v61.txt`
+pixels inside panel 6. No ledger entry is affected either — `ledgers/residuals_v61.txt`
 takes its low-adc numbers from the acceptance battery, which was always consistent.
 
 The veto is `CANON::LASER_VETO` (`include/canon.h:24`, `"event!=44"`); the fixed
-rows append it rather than spelling the condition out inline.
+entries append it rather than spelling the condition out inline.
 
 Commits: **69a1da9** (v61r replot, which uncovered the discrepancy) and
 **1430887** (the fix and the `_v61rfix` / `_v61rcfix` renders).

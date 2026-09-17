@@ -1,10 +1,10 @@
 # V6 residual summary (2026-08-23, V6-TWIST state): dev% = sim/real - 1
 # group | label | dev_vs_ALL-99_real | dev_vs_COMPLETE-61_real (999 = n/a)
-# V6 = laser-vetoed re-baseline + real-radius geometry bake + per-(side,row)
+# V6 = laser-vetoed re-baseline + real-radius geometry bake + per-(side,layer)
 # azimuthal twist field term (twist_field_request.md; injected at transport,
 # lib family raw_lib_pp6t). The lib rebuild re-rolled the composer realization
 # (v5.5 A/B precedent, window sigma 1.5-3%): windows/bump/step/content moves vs
-# the pre-twist draw are realization, spectral/response rows are unchanged.
+# the pre-twist draw are realization, spectral/response entries are unchanged.
 # sub10 target: laser-vetoed 1.00e-4 (complete-61) / 1.08e-4 (all-99); sim
 # 9.56e-5 after the V6 trace-table refit. fired-mean = gate (+4.7 vs anchor).
 time|window w1 (early)|-12.9|+3.6

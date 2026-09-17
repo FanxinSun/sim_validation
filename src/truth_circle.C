@@ -4,9 +4,9 @@
 //   truth hits   : ntp_g4hit step midpoints (gx,gy) of primary tracks with
 //                  vertex pT in [0.45,0.55] (P5/PP_g4hit_*.root)
 //   reco clusters: truth-matched reconstructed clusters from the island91
-//                  v5.2 production (ntp_cluster x,y; row-aligned ntp_truth
+//                  v5.2 production (ntp_cluster x,y; entry-aligned ntp_truth
 //                  cls==0 && ntrks==1 in the pT window)
-// The intermediate per-pad-row truth-cluster tier of the v5.1 edition was
+// The intermediate per-pad-layer truth-cluster tier of the v5.1 edition was
 // removed (user, 2026-07-25) — scaffolding only, nothing consumed it.
 // HISTORY: the v5.1 edition of this test DISCOVERED the composer truth-id
 // conflation ((file,trk) remap key + first-in-file gpt tables). That is
@@ -112,7 +112,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
       { geoR[L] = r; ngeo++; }
     }
     fclose(ft);
-    printf("geom table: %d rows\n", ngeo);
+    printf("geom table: %d entries\n", ngeo);
   }
 
   struct Trk { std::vector<double> x, y, r; float pt = 0; int flav = 0; };
@@ -292,7 +292,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
     return Rexp * (1. - std::cos(da));
   };
   double sag = sagitta(20.0, 78.0);              // full gas volume (truth hits)
-  double sagrow = sagitta(geoR[7], geoR[54]);    // pad rows L7-L54 (clusters)
+  double saglayer = sagitta(geoR[7], geoR[54]);  // pad layers L7-L54 (clusters)
   FILE *fo = fopen(Form("%s/ledgers/truth_circle_%s.txt", VDIR(), ver), "w");
   auto P = [&](const char *fmt, ...) {
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
@@ -300,8 +300,8 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
   };
   P("truth_circle %s — pT window [%.2f,%.2f] GeV, B=%.2f T (nominal), R_exp=%.1f cm\n",
     ver, pt_lo, pt_hi, BFIELD, Rexp);
-  P("sagitta: %.2f cm over the gas (r 20-78, truth hits)  |  %.2f cm over pad rows (r %.1f-%.1f, clusters)\n",
-    sag, sagrow, geoR[7], geoR[54]);
+  P("sagitta: %.2f cm over the gas (r 20-78, truth hits)  |  %.2f cm over pad layers (r %.1f-%.1f, clusters)\n",
+    sag, saglayer, geoR[7], geoR[54]);
   P("truth hits   : %ld window primaries, %ld full R1->R3 crossers fitted\n", nwin1, nfull1);
   P("               median RMS %.0f um  (p90 %.0f um), median R_fit %.2f cm, R_fit/R_exp(pT) %.4f\n",
     med(rms1) * 1000, pct(rms1, 0.90) * 1000, med(rfit1), med(rrat1));
@@ -312,8 +312,8 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
     nfit3, med(rfit3), nfit3 ? 100. * nfit3sel / nfit3 : 0., RSEL_LO, RSEL_HI);
   P("               R-selected: %ld segments, median RMS %.0f um (p90 %.0f um)\n",
     nfit3sel, med(rms3sel) * 1000, pct(rms3sel, 0.90) * 1000);
-  P("deviation/sagitta: truth hits %.2e (gas)   reco clusters %.2e (pad rows)\n",
-    med(rms1) / 10 / sag, med(rms3sel) / 10 / sagrow);
+  P("deviation/sagitta: truth hits %.2e (gas)   reco clusters %.2e (pad layers)\n",
+    med(rms1) / 10 / sag, med(rms3sel) / 10 / saglayer);
   P("species of fitted truth-hit tracks: ");
   for (auto &kv : flavcnt) P("|pdg|=%d:%d  ", kv.first, kv.second);
   P("\n");
@@ -401,7 +401,7 @@ void truth_circle(double pt_lo = 0.45, double pt_hi = 0.55, int ng4 = 3,
     hrms3->Draw("hist");
     hrms1->Draw("hist same");
     TLatex tx; tx.SetTextSize(0.031); tx.SetNDC();
-    tx.DrawLatex(0.30, 0.84, Form("R_{exp}(0.5 GeV) = %.1f cm; sagitta %.2f (gas) / %.2f (rows) cm", Rexp, sag, sagrow));
+    tx.DrawLatex(0.30, 0.84, Form("R_{exp}(0.5 GeV) = %.1f cm; sagitta %.2f (gas) / %.2f (layers) cm", Rexp, sag, saglayer));
     tx.DrawLatex(0.30, 0.79, Form("median RMS: truth %.0f #mum, reco clusters %.0f #mum",
                                   med(rms1) * 1000, med(rms3sel) * 1000));
     tx.DrawLatex(0.30, 0.74, Form("truth R_{fit}/R_{exp}(p_{T}) = %.4f;  fits %ld / %ld", med(rrat1), nfull1, nfit3sel));

@@ -98,7 +98,7 @@ in-time fraction **0.34 vs 0.33** — the time-structure of found circles matche
 
 MS displacement ~20–30 µm → truth-trajectory circle RMS 20 µm → real pixel-level
 805 µm → real cluster-level 658–692 µm → sim cluster-level 815–842 µm. Sagitta to
-measure: 21,400 µm over the pad rows. MS is 3% of the measurement noise and 0.1% of
+measure: 21,400 µm over the pad layers. MS is 3% of the measurement noise and 0.1% of
 the signal; **treat clusters as points on an ideal circle plus resolution; put the
 modeling effort into distortions and response, not scattering.**
 

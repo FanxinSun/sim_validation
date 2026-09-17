@@ -2,7 +2,7 @@
 # The residual TABLE has no producer macro in this submodule: the numbers are
 # measured by the pipeline's acceptance battery (island_post) and curated by the
 # pipeline session. The v6.1 artifacts are byte-identical (manifest md5s verified
-# 2026-09-05), so the rows below are carried over UNCHANGED from residuals_v61.txt
+# 2026-09-05), so the entries below are carried over UNCHANGED from residuals_v61.txt
 # — they are NOT a fresh measurement. Only residual_summary_v61r.png is re-rendered.
 # v6.1 residual summary (2026-08-23): dev% = sim/real - 1
 # group | label | dev_vs_ALL-99_real | dev_vs_COMPLETE-61_real (999 = n/a)

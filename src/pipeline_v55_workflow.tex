@@ -64,7 +64,7 @@
    [\,nudge: \m{rowdr} only, FIELD OFF\,] $\to$ clusters (new)\qquad
    reference: real run 79507, pp 200\,GeV, COMPLETE-62 subset};
 
-% ================= ROW A =================
+% ================= LINE A ================
 \node[stage] (c1) at (0.6,24.9) {%
   \eyebrow{1 \ \ GENERATOR}\hfill\eyebrow{\m{gen\_pp.cc} $\cdot$ Pythia 8.317}\\[2pt]
   \ctitle{pp minimum bias, $\sqrt{s}=200$\,GeV}\\[3pt]
@@ -102,7 +102,7 @@
   {\color{fieldc}$\Rightarrow$} \m{raw\_lib\_pp55\_0..9.root} (\m{raw\_pix}) ---
   new field-on library family};
 
-% ================= ROW B =================
+% ================= LINE B ================
 \node[stage] (c4) at (0.6,18.9) {%
   \eyebrow{4 \ \ COMPOSER}\hfill\eyebrow{\m{frame\_composer.C}}\\[2pt]
   \ctitle{single collisions $\to$ recorded frames}\\[3pt]
@@ -137,9 +137,9 @@
        L7/12/22): a lookup convention, not physics\\[3pt]
   {\color{arts}$\Rightarrow$} \m{island91\_...v55} (91 branches $+$ \m{ntp\_truth},
   8{,}241{,}678 clusters) $\cdot$ \m{prodclus\_v55} (9{,}515{,}005) $\cdot$
-  \m{hit69\_...v55} (83{,}260{,}466 rows)};
+  \m{hit69\_...v55} (83{,}260{,}466 entries)};
 
-% ---- flow arrows, row A ----
+% ---- flow arrows, line A ----
 \draw[flow] (11.6,22.7) -- (14.5,22.7);
 \node[obj] at (13.05,23.15) {\m{pp\_run\_*.dat}};
 \draw[flow] (25.5,22.7) -- (28.4,22.7);
@@ -150,7 +150,7 @@
 \node[obj, text=fieldc] at (20.0,20.25)
   {\m{raw\_lib\_pp55\_0..9.root} --- transported charge, \bd{field already applied}};
 
-% ---- flow arrows, row B ----
+% ---- flow arrows, line B ----
 \draw[flow] (11.6,16.7) -- (14.5,16.7);
 \node[obj] at (13.05,17.15) {composed\\\m{raw\_pix}};
 \draw[flow] (25.5,16.7) -- (28.4,16.7);
@@ -162,7 +162,7 @@
   {\color{sub}Definition: the measured discrepancy between positions reconstructed
   under the ideal GDML geometry and those observed in run 79507. Physical origin
   (mechanical misalignment vs drift distortion) \bd{left open by design}; the CDB
-  static map is excluded --- real clusters are uncorrected and row-locked, and the
+  static map is excluded --- real clusters are uncorrected and layer-locked, and the
   map's cm-scale bulk matches nothing observed.}\\[4pt]
   argument string \m{"0:0|0|0.0426|0|0|2.49|0.26"} $=$
   \m{znodes|GRS|SMOD|SREG|SSEC|SPHI|SCM}\\[3pt]
@@ -175,7 +175,7 @@
   \m{SCM} $k=2,3$, independent per side & 0.26\,cm
     & central-membrane jump $0.480\pm0.13$\,cm\\[1pt]
   \m{rowdr} (export only --- \bd{not} injected) & $+1.2\ldots0.4$\,mm
-    & real row radii vs GDML nominal\\
+    & real layer radii vs GDML nominal\\
   \end{tabular}\\[4pt]
   {\color{sub}Mechanics: hashed patterns with seeds \bd{bit-identical} to
   \m{islandize91}'s, so this is the same field one stage earlier; lookups are
@@ -214,7 +214,7 @@
   content [px/event] & 323{,}799 & 333{,}046 & $+2.9\%$
   \end{tabular}\\[4pt]
   {\color{sub}Cluster-level closures reproduce v5.4c with \bd{no re-solve} of the
-  field amplitudes. The two \color{warn}amber\color{sub}{} rows are the same
+  field amplitudes. The two \color{warn}amber\color{sub}{} entries are the same
   finding seen twice --- simulated charge clouds are too wide at low $p_T$ ---
   and are owned by the response axis, not by the field.}};
 

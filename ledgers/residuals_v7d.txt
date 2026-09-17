@@ -2,8 +2,8 @@
 # group | label | dev_vs_ALL-99_real | dev_vs_COMPLETE-61_real (999 = n/a)
 # v7d = W1 world-tuned generator (Monash + pT0Ref 2.55, StringPT:sigma 0.36,
 # probStoUD 0.27, probQQtoQ 0.11; dNch/deta 2.18) with the v6.1 detector chain
-# FROZEN. Content rows show the honest TPC-charge deficit of a world-consistent
-# generator; shape/spectral rows show what the detector chain does with less
+# FROZEN. Content entries show the honest TPC-charge deficit of a world-consistent
+# generator; shape/spectral entries show what the detector chain does with less
 # content. NOT a sealed version — decision draft.
 time|window w1 (early)|-16.5|-0.7
 time|window w2 (mid)|-1.5|+2.3

@@ -8,7 +8,7 @@
 //                 tracks — whole-track circle RMS in the two fitted-pT
 //                 windows, split-arc tangent mismatch at r0=49, signed d0.
 //   fc_pixels   : digi pair, per-pixel-truth-grouped raw-pixel tracks —
-//                 whole-track (global) fit and 4-adjacent-row local
+//                 whole-track (global) fit and 4-adjacent-layer local
 //                 (short-sagitta) fit.
 // Fitter/bars identical to the ms_nofinder battery (Kasa + 6 Gauss-Newton;
 // global bar >=12 pts, span >=15 cm, 45<=R_fit<2e4; windows by fitted R).
@@ -121,7 +121,7 @@ void stats(const std::vector<double> &v, double &sig, double &err, double &core)
   }
   core = sg;
 }
-bool loadRows(double rowR[55])
+bool loadLayerRadii(double layerR[55])
 {
   FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
   if (!fp) { printf("no tpc_geom_table.txt\n"); return false; }
@@ -130,7 +130,7 @@ bool loadRows(double rowR[55])
   {
     int L, nb; double r, sl, p0, p1;
     if (sscanf(line, "%d %d %lf %lf %lf %lf", &L, &nb, &r, &sl, &p0, &p1) == 6 && L >= 7 && L <= 54)
-      rowR[L] = r;
+      layerR[L] = r;
   }
   fclose(fp);
   return true;
@@ -327,19 +327,19 @@ void fc_clusters(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/isla
 
 // ---------------------------------------------------------------------------
 // PIXEL LEVEL: digi ideal vs field-on, per-pixel-truth-grouped tracks;
-// whole-track (global) vs 4-adjacent-row local (short-sagitta) fits.
+// whole-track (global) vs 4-adjacent-layer local (short-sagitta) fits.
 void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6ideal.root",
                const char *dist = "/home/rog/sPHENIX/3D_ClusterFindingML/island_post/digi_frames_production_v6.root",
                int nsim = 60, const char *ver = "v6")
 {
   using namespace MFC;
-  double rowR[55];
-  if (!loadRows(rowR)) return;
-  auto nearRow = [&](double r) -> int {
+  double layerR[55];
+  if (!loadLayerRadii(layerR)) return;
+  auto nearLayer = [&](double r) -> int {
     int best = -1; double bd = 1e9;
     for (int L = 7; L <= 54; ++L)
     {
-      double d = std::fabs(r - rowR[L]);
+      double d = std::fabs(r - layerR[L]);
       if (d < bd) { bd = d; best = L; }
     }
     return bd < 0.60 ? best : -1;
@@ -367,7 +367,7 @@ void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island
       t->GetEntry(i);
       if ((int) ev >= nsim) continue;
       if (lay < 7 || lay > 54 || adc <= 0 || tid <= 0) continue;
-      double r = rowR[(int) lay];
+      double r = layerR[(int) lay];
       Grp &G = g[{(int) ev, (int) tid}];
       G.x.push_back(r * std::cos(phi));
       G.y.push_back(r * std::sin(phi));
@@ -382,23 +382,23 @@ void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island
       ngrp[s]++;
       grms[s].push_back(F.rms * 1e4);
       std::vector<std::vector<double>> wx(45), wy(45);
-      std::vector<std::set<int>> wrow(45);
+      std::vector<std::set<int>> wlay(45);
       for (size_t i = 0; i < G.x.size(); ++i)
       {
-        int row = nearRow(G.r[i]);
-        if (row < 0) continue;
-        for (int w = std::max(7, row - 3); w <= std::min(51, row); ++w)
+        int layer = nearLayer(G.r[i]);
+        if (layer < 0) continue;
+        for (int w = std::max(7, layer - 3); w <= std::min(51, layer); ++w)
         {
           wx[w - 7].push_back(G.x[i]);
           wy[w - 7].push_back(G.y[i]);
-          wrow[w - 7].insert(row);
+          wlay[w - 7].insert(layer);
         }
       }
       for (int w = 0; w < 45; ++w)
       {
         if (wx[w].empty()) continue;
         nwin[s]++;
-        if ((int) wrow[w].size() < 3 || (int) wx[w].size() < 5) continue;
+        if ((int) wlay[w].size() < 3 || (int) wx[w].size() < 5) continue;
         Fit L = fitCircle(wx[w], wy[w]);
         if (!L.ok) continue;
         nfitw[s]++;
@@ -415,7 +415,7 @@ void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island
   };
   P("[fc_pixels %s] SIM-ONLY ideal vs distortion field, digi raw-pixel tracks (%d frames)\n", ver, nsim);
   for (int s = 0; s < 2; ++s)
-    P("  %s: %ld tracks | GLOBAL RMS med %.0f um | LOCAL 4-row med %.0f um (%ld/%ld windows)\n",
+    P("  %s: %ld tracks | GLOBAL RMS med %.0f um | LOCAL 4-layer med %.0f um (%ld/%ld windows)\n",
       sn[s], ngrp[s], med(grms[s]), med(wrms[s]), nfitw[s], nwin[s]);
   P("  FIELD SHARE: global %.0f um in quadrature | local shift %.0f um "
     "(short-sagitta fit rejects the smooth field by construction)\n",
@@ -424,7 +424,7 @@ void fc_pixels(const char *ideal = "/home/rog/sPHENIX/3D_ClusterFindingML/island
   gStyle->SetOptStat(0);
   TCanvas *cv = new TCanvas("cvfp", "fieldcmp pixels", 1500, 620);
   cv->Divide(2, 1);
-  const char *pt[2] = {"GLOBAL whole-track fit", "LOCAL 4-row short-sagitta fit"};
+  const char *pt[2] = {"GLOBAL whole-track fit", "LOCAL 4-layer short-sagitta fit"};
   for (int p = 0; p < 2; ++p)
   {
     cv->cd(p + 1);

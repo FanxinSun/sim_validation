@@ -241,7 +241,7 @@ def main():
     A(f"#                         reference only: it is PLB 637 (2006) 161 / nucl-ex/0601033,")
     A(f"#                         a DIFFERENT paper from ins628232, with pi to 10 and p to")
     A(f"#                         7 GeV/c and NO kaon observable.  Its value here is the high-pT")
-    A(f"#                         reach.  Its rows are NOT a convention comparison.")
+    A(f"#                         reach.  Its entries are NOT a convention comparison.")
     A(f"#                         ERRATUM: the handover identified I709170 as PLB 616; it is not.")
     A(f"#   STAR_2008_I793126     official, shipped with Rivet.  UNVALIDATED and SHAPE-ONLY:")
     A(f"#                         its finalize() normalises the multiplicity distribution and")
@@ -277,7 +277,7 @@ def main():
                   f"{'-':>7s} {'-':>7s} {'-':>7s}   {'-':>8s} {'-':>7s}  (no hand-rolled counterpart)")
     A("   flag: FLAG = differs by more than 0.05 AND by more than 2 MC sigma;")
     A("         stat = differs by more than 0.05 but is within 2 MC sigma, i.e. the 0.05")
-    A("                threshold is below this row's statistical resolution;")
+    A("                threshold is below this entry's statistical resolution;")
     A("         ok   = agrees within 0.05.")
     A("")
 
@@ -329,7 +329,7 @@ def main():
     A("   ok* = within the 0.05 threshold but more than 2 MC sigma from the hand-rolled")
     A("         value: a real, small, systematic offset (the NSD definition).")
     A("   The hand-rolled STAR column used the hyperon-excluded proton definition, so the")
-    A("   p_fd row is its like-for-like counterpart; the p row shows the size of that choice.")
+    A("   p_fd entry is its like-for-like counterpart; the p entry shows the size of that choice.")
     A("")
 
     A("== C2 (bonus): STAR_2006_I709170 (PLB 637) — a DIFFERENT measurement, high-pT reach ==")
@@ -341,8 +341,8 @@ def main():
             wm, wlo, whi, wn = mean_ratio(R[(t, "STAR06", sp, "win")][2])
             A(f"{t:11s} {sp:3s} {m:7.3f} {lo:7.3f} {hi:7.3f} {n:6d} | "
               f"{wm:8.3f} {wlo:7.3f} {whi:7.3f} {wn:4d}")
-    A("   win.* restricts to the pT window of PLB 616 for orientation only; the rows are not")
-    A("   a canonical-vs-hand-rolled comparison.  No kaon row exists in this routine.")
+    A("   win.* restricts to the pT window of PLB 616 for orientation only; the entries are not")
+    A("   a canonical-vs-hand-rolled comparison.  No kaon entry exists in this routine.")
     A("")
 
     A("== D: multiplicity ==")
@@ -387,7 +387,7 @@ def main():
     A("   tau0Max = 1e-7 mm, so Pythia leaves K0S, Lambda (and pi0) undecayed in the mdc2")
     A("   sample.  mdc2_nolim is the same tune with limitTau0 = off.  Difference = the part")
     A("   of the mdc2 signature that is decay handling rather than tune.  Note that in the")
-    A("   mdc2 sample the inclusive and feed-down-corrected proton rows of section C are")
+    A("   mdc2 sample the inclusive and feed-down-corrected proton entries of section C are")
     A("   IDENTICAL (0.561 both), which is the direct proof that no hyperon decays occur.")
     A(f"{'observable':34s} {'mdc2':>9s} {'mdc2_nolim':>11s} {'delta':>9s}")
     for sp in ("pi", "K", "p"):

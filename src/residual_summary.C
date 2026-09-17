@@ -1,5 +1,5 @@
 // residual_summary.C — ONE-PLOT residual overview: every measured sim-vs-real
-// deviation as a horizontal bar row, grouped by family, with BOTH references
+// deviation as one horizontal bar per entry, grouped by family, with BOTH references
 // where they exist (filled blue = vs ALL real events; open red = vs the
 // STEADY subset excluding end-truncated boundary windows). Shaded band =
 // +-5% window-gate noise floor. Reads a residuals_<ver>.txt data file
@@ -47,8 +47,8 @@ void residual_summary(const char *datafile = "residuals_v50.txt",
 {
   gROOT->SetBatch(1);
   gStyle->SetOptStat(0);
-  struct Row { std::string grp, lab; double a, s; };
-  std::vector<Row> rows;
+  struct Entry { std::string grp, lab; double a, s; };
+  std::vector<Entry> entries;
   std::ifstream fi(datafile);
   std::string L;
   while (std::getline(fi, L))
@@ -58,9 +58,9 @@ void residual_summary(const char *datafile = "residuals_v50.txt",
     std::string g, l, a, s;
     std::getline(ss, g, '|'); std::getline(ss, l, '|');
     std::getline(ss, a, '|'); std::getline(ss, s, '|');
-    rows.push_back({g, l, atof(a.c_str()), atof(s.c_str())});
+    entries.push_back({g, l, atof(a.c_str()), atof(s.c_str())});
   }
-  const int N = rows.size();
+  const int N = entries.size();
   const double XMIN = -32, XMAX = 32;
   TCanvas c("c", "", 1150, 60 + 42 * N);
   c.SetLeftMargin(0.30); c.SetRightMargin(0.10);
@@ -80,8 +80,8 @@ void residual_summary(const char *datafile = "residuals_v50.txt",
   std::string lastg;
   for (int i = 0; i < N; ++i)
   {
-    int y = N - 1 - i;   // first row on top
-    Row &r = rows[i];
+    int y = N - 1 - i;   // first entry on top
+    Entry &r = entries[i];
     if (r.grp != lastg)
     {
       lastg = r.grp;
@@ -122,5 +122,5 @@ void residual_summary(const char *datafile = "residuals_v50.txt",
   lg->AddEntry(gs, "vs COMPLETE subset (61 non-laser events, full windows)", "p");
   lg->Draw();
   c.SaveAs(out && out[0] ? out : Form("%s/plots/residual_summary_v50.png", VDIR()));
-  printf("residual_summary: %d rows -> %s\n", N, out);
+  printf("residual_summary: %d entries -> %s\n", N, out);
 }

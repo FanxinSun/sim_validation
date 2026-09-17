@@ -5,7 +5,7 @@
 //                 vs real ntp_hit pixels (grouped by the tracker: pixels
 //                 road-matched to ntp_clus_trk seed clusters, same layer,
 //                 dxy < 1.2 cm, |dtbin| <= 6). One canvas, log-x RMS.
-//   nf_clusters : sim island91 ntp_cluster (grouped by row-aligned ntp_truth
+//   nf_clusters : sim island91 ntp_cluster (grouped by entry-aligned ntp_truth
 //                 gtrackID) vs real ntp_clus_trk clusters (grouped by seedID).
 //                 One canvas, linear RMS.
 //   nf_tracks   : real ntp_clus_trk only (sim has no tracker output — skip):
@@ -13,7 +13,7 @@
 //   nf_ms_hits  : the ms_split.C split-arc MS (multiple scattering) tangent-
 //                 mismatch test at HIT level (user, 2026-08-13): sim truth
 //                 hits with the ms_split method VERBATIM (r0=35 reproduction
-//                 + r0=49), real tracker-grouped pixels at r0=49 (rows start
+//                 + r0=49), real tracker-grouped pixels at r0=49 (layers start
 //                 31.4 -> 35 impossible; ms_real precedent), one canvas.
 // UNIFORM BAR everywhere (the only selection): >= 12 points, radial span
 // >= 15 cm, 45 <= R_fit < 2e4 cm. RAW fit — no outlier cleaning, no pT
@@ -563,7 +563,7 @@ void nf_tracks(const char *realf = "/home/rog/sPHENIX/3D_ClusterFindingML/cluste
 //    halves >=10 pts, |dpsi| < 8 mrad kink veto, Gluckstern-type fit noise,
 //    per-track Highland ORDER scale) at TWO borders: r0=35 (the adopted
 //    ms_split border — reproduction of the v53f record) and r0=49 (mid pad
-//    rows, the only border the real side can share).
+//    layers, the only border the real side can share).
 //    REAL ntp_hit pixels (tracker-grouped via realPixGroups) at r0=49;
 //    windows by FITTED whole-track curvature (no truth exists); NO kink veto
 //    (pixel-level fit noise is tens of mrad — the veto would clip the
@@ -706,7 +706,7 @@ void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP
       if (!tangentAtR(Fi, R0, hxi, hyi, dx, dy, psi_i)) continue;
       if (!tangentAtR(Fo, R0, hxo, hyo, dx, dy, psi_o)) continue;
       rdp[w].push_back(wrapphi(psi_o - psi_i) * 1e3);       // NO veto at pixel level
-      double Li = R0 - 31.4, Lo = 75.4 - R0;                // pad-row lever arms
+      double Li = R0 - 31.4, Lo = 75.4 - R0;                // pad-layer lever arms
       double s_i = Fi.rms / Li * std::sqrt(192. / (Fi.n + 4));
       double s_o = Fo.rms / Lo * std::sqrt(192. / (Fo.n + 4));
       rfn[w].push_back(std::sqrt(s_i * s_i + s_o * s_o) * 1e3);
@@ -835,16 +835,16 @@ void nf_ms_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP
 
 // ---------------------------------------------------------------------------
 // 5. HIT-LEVEL SHORT-SAGITTA FIT, no finder (user, 2026-08-13): replace the
-//    global whole-track fit by LOCAL fits over 4 ADJACENT PAD ROWS, sliding
+//    global whole-track fit by LOCAL fits over 4 ADJACENT PAD LAYERS, sliding
 //    window start L = 7..51 (45 windows), sim vs real one canvas.
 //    Algo corrections vs the proposal (verified): (a) sliding windows overlap
-//    -> each point pushed into EVERY window containing its row (up to 4), a
-//    single per-point key would leave one row per window; (b) ntp_g4hit has
-//    no layer branch -> row = nearest pad-row radius from tpc_geom_table.txt
-//    (valid for real pixels too: pixel r IS its row radius); (c) the global
+//    -> each point pushed into EVERY window containing its layer (up to 4), a
+//    single per-point key would leave one layer per window; (b) ntp_g4hit has
+//    no layer branch -> layer = nearest pad-layer radius from tpc_geom_table.txt
+//    (valid for real pixels too: pixel r IS its layer radius); (c) the global
 //    bar cannot gate windows (span 1.7-3.3 cm << 15; curvature invisible:
 //    sagitta ~100 um at 0.5 GeV under mm noise) -> sample = tracks passing
-//    the GLOBAL nf_hits bar, then per-window >=3 distinct rows, n>=5.
+//    the GLOBAL nf_hits bar, then per-window >=3 distinct layers, n>=5.
 //    Expected sim wall: G4 ~1 cm stepping -> 3-6 truth points/window, many
 //    unfittable; truth local RMS = the um floor (locally exact arc).
 void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/PP_g4hit_%d.root", int ng4 = 10,
@@ -852,7 +852,7 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
                  const char *ver = "v61")
 {
   using namespace MNF;
-  double rowR[55];
+  double layerR[55];
   {
     FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
     if (!fp) { printf("no tpc_geom_table.txt\n"); return; }
@@ -861,41 +861,41 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
     {
       int L, nb; double r, sl, p0, p1;
       if (sscanf(line, "%d %d %lf %lf %lf %lf", &L, &nb, &r, &sl, &p0, &p1) == 6 && L >= 7 && L <= 54)
-        rowR[L] = r;
+        layerR[L] = r;
     }
     fclose(fp);
   }
-  auto nearRow = [&](double r) -> int {
+  auto nearLayer = [&](double r) -> int {
     int best = -1; double bd = 1e9;
     for (int L = 7; L <= 54; ++L)
     {
-      double d = std::fabs(r - rowR[L]);
+      double d = std::fabs(r - layerR[L]);
       if (d < bd) { bd = d; best = L; }
     }
-    return bd < 0.60 ? best : -1;               // beyond half-pitch of any row
+    return bd < 0.60 ? best : -1;               // beyond half-pitch of any layer
   };
   // per accepted global track: subdivide into windows, fit each
   long nwin[2] = {0, 0}, nfitw[2] = {0, 0};     // [0]=real [1]=sim
   std::vector<double> wrms[2], wn[2];
   auto scanTrack = [&](const Grp &G, int side) {
     std::vector<std::vector<double>> wx(45), wy(45);
-    std::vector<std::set<int>> wrow(45);
+    std::vector<std::set<int>> wlay(45);
     for (size_t i = 0; i < G.x.size(); ++i)
     {
-      int row = nearRow(G.r[i]);
-      if (row < 0) continue;
-      for (int w = std::max(7, row - 3); w <= std::min(51, row); ++w)
+      int layer = nearLayer(G.r[i]);
+      if (layer < 0) continue;
+      for (int w = std::max(7, layer - 3); w <= std::min(51, layer); ++w)
       {
         wx[w - 7].push_back(G.x[i]);
         wy[w - 7].push_back(G.y[i]);
-        wrow[w - 7].insert(row);
+        wlay[w - 7].insert(layer);
       }
     }
     for (int w = 0; w < 45; ++w)
     {
       if (wx[w].empty()) continue;
       nwin[side]++;
-      if ((int) wrow[w].size() < 3 || (int) wx[w].size() < 5) continue;
+      if ((int) wlay[w].size() < 3 || (int) wx[w].size() < 5) continue;
       Fit F = fitCircle(wx[w], wy[w]);
       if (!F.ok) continue;
       nfitw[side]++;
@@ -954,8 +954,8 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
     va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap);
     va_start(ap, fmt); vfprintf(fo, fmt, ap); va_end(ap);
   };
-  P("[nf_sag_hits %s] HIT-level SHORT-SAGITTA local fits: 4 adjacent pad rows, 45 sliding windows\n", ver);
-  P("  sample = tracks passing the nf_hits GLOBAL bar; window gate >=3 distinct rows, n>=5\n");
+  P("[nf_sag_hits %s] HIT-level SHORT-SAGITTA local fits: 4 adjacent pad layers, 45 sliding windows\n", ver);
+  P("  sample = tracks passing the nf_hits GLOBAL bar; window gate >=3 distinct layers, n>=5\n");
   P("  real: %ld tracks -> %ld/%ld windows fittable (%.0f%%) | local RMS med %.0f um | n/window med %.0f\n",
     rgrp, nfitw[0], nwin[0], nwin[0] ? 100. * nfitw[0] / nwin[0] : 0, med(wrms[0]), med(wn[0]));
   P("  sim : %ld tracks -> %ld/%ld windows fittable (%.0f%%) | local RMS med %.2f um | n/window med %.0f\n",
@@ -975,7 +975,7 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
   cv->SetLogx();
   hr->SetLineColor(kBlack); hr->SetLineWidth(2);
   hs->SetLineColor(kBlue + 1); hs->SetLineWidth(2); hs->SetLineStyle(2);
-  hr->SetTitle("hit level, no finder: SHORT-SAGITTA local fits (4 adjacent rows)");
+  hr->SetTitle("hit level, no finder: SHORT-SAGITTA local fits (4 adjacent layers)");
   hr->SetMaximum(1.35 * std::max(hr->GetMaximum(), hs->GetMaximum()));
   hr->Draw("hist");
   hs->Draw("hist same");
@@ -989,8 +989,8 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
                                 nfitw[0], nfitw[1],
                                 nwin[0] ? 100. * nfitw[0] / nwin[0] : 0,
                                 nwin[1] ? 100. * nfitw[1] / nwin[1] : 0));
-  tx.DrawLatex(0.14, 0.61, "same tracks as the global fit; window gate: >=3 rows, n>=5");
-  tx.DrawLatex(0.14, 0.56, "local fit sees point scatter only; curvature invisible over 4 rows");
+  tx.DrawLatex(0.14, 0.61, "same tracks as the global fit; window gate: >=3 layers, n>=5");
+  tx.DrawLatex(0.14, 0.56, "local fit sees point scatter only; curvature invisible over 4 layers");
   cv->SaveAs(Form("%s/plots/ms_nofinder_saghits_%s.png", VDIR(), ver));
   printf("wrote ms_nofinder_saghits_%s.png\n", ver);
 }
@@ -999,9 +999,9 @@ void nf_sag_hits(const char *g4pat = "/home/rog/sPHENIX/3D_ClusterFindingML/P5/P
 // 6. MATCHED PIXEL-LEVEL COMPARISON (user, 2026-08-13 "do it on v54c"):
 //    sim DIGI pixels (digi_frames_production_v53.root — the sealed digi that
 //    v5.4c is exported from; per-pixel gtrackID = truth grouping, x/y from
-//    row radius x phi) vs real ntp_hit pixels (tracker-grouped). BOTH sides
+//    layer radius x phi) vs real ntp_hit pixels (tracker-grouped). BOTH sides
 //    now carry charge clouds -> the like-for-like the supervisor's
-//    short-sagitta prediction assumes. One canvas: global fit | 4-row local.
+//    short-sagitta prediction assumes. One canvas: global fit | 4-layer local.
 //    DECLARED CAVEATS: (a) sim pixel positions are field-free (the v5.4
 //    field is a cluster-export overlay; a pixel-level field needs
 //    re-digitization) — local fits reject the smooth field anyway; real
@@ -1014,7 +1014,7 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
                 const char *ver = "v61", const char *dump = "")
 {
   using namespace MNF;
-  double rowR[55];
+  double layerR[55];
   {
     FILE *fp = fopen("/home/rog/sPHENIX/3D_ClusterFindingML/island_post/tpc_geom_table.txt", "r");
     if (!fp) { printf("no tpc_geom_table.txt\n"); return; }
@@ -1023,20 +1023,20 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
     {
       int L, nb; double r, sl, p0, p1;
       if (sscanf(line, "%d %d %lf %lf %lf %lf", &L, &nb, &r, &sl, &p0, &p1) == 6 && L >= 7 && L <= 54)
-        rowR[L] = r;
+        layerR[L] = r;
     }
     fclose(fp);
   }
-  auto nearRow = [&](double r) -> int {
+  auto nearLayer = [&](double r) -> int {
     int best = -1; double bd = 1e9;
     for (int L = 7; L <= 54; ++L)
     {
-      double d = std::fabs(r - rowR[L]);
+      double d = std::fabs(r - layerR[L]);
       if (d < bd) { bd = d; best = L; }
     }
     return bd < 0.60 ? best : -1;
   };
-  // one pass per side: global fit + 4-row sliding windows (same as nf_sag_hits)
+  // one pass per side: global fit + 4-layer sliding windows (same as nf_sag_hits)
   long ngrp[2] = {0, 0}, nwin[2] = {0, 0}, nfitw[2] = {0, 0}, npxs[2] = {0, 0};
   std::vector<double> grms[2], wrms[2];              // [0]=real [1]=sim, um
   auto doTrack = [&](const Grp &G, int side) {
@@ -1046,23 +1046,23 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
     npxs[side] += (long) G.x.size();
     grms[side].push_back(F.rms * 1e4);
     std::vector<std::vector<double>> wx(45), wy(45);
-    std::vector<std::set<int>> wrow(45);
+    std::vector<std::set<int>> wlay(45);
     for (size_t i = 0; i < G.x.size(); ++i)
     {
-      int row = nearRow(G.r[i]);
-      if (row < 0) continue;
-      for (int w = std::max(7, row - 3); w <= std::min(51, row); ++w)
+      int layer = nearLayer(G.r[i]);
+      if (layer < 0) continue;
+      for (int w = std::max(7, layer - 3); w <= std::min(51, layer); ++w)
       {
         wx[w - 7].push_back(G.x[i]);
         wy[w - 7].push_back(G.y[i]);
-        wrow[w - 7].insert(row);
+        wlay[w - 7].insert(layer);
       }
     }
     for (int w = 0; w < 45; ++w)
     {
       if (wx[w].empty()) continue;
       nwin[side]++;
-      if ((int) wrow[w].size() < 3 || (int) wx[w].size() < 5) continue;
+      if ((int) wlay[w].size() < 3 || (int) wx[w].size() < 5) continue;
       Fit L = fitCircle(wx[w], wy[w]);
       if (!L.ok) continue;
       nfitw[side]++;
@@ -1095,7 +1095,7 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
       t->GetEntry(i);
       if ((int) ev >= nsim) continue;
       if (lay < 7 || lay > 54 || adc <= 0 || tid <= 0) continue;
-      double r = rowR[(int) lay];
+      double r = layerR[(int) lay];
       Grp &G = g[{(int) ev, (int) tid}];
       G.x.push_back(r * std::cos(phi));
       G.y.push_back(r * std::sin(phi));
@@ -1127,7 +1127,7 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
   P("[nf_digipix %s] MATCHED pixel level: sim DIGI pixels (%s, truth-grouped) "
     "vs real pixels (tracker-grouped)\n", ver, digif);
   for (int s = 0; s < 2; ++s)
-    P("  %s: %ld tracks (%.0f px/track) | GLOBAL RMS med %.0f um | LOCAL (4-row) med %.0f um "
+    P("  %s: %ld tracks (%.0f px/track) | GLOBAL RMS med %.0f um | LOCAL (4-layer) med %.0f um "
       "(%ld/%ld windows, %.0f%%)\n",
       s == 0 ? "real" : "sim ", ngrp[s], ngrp[s] ? (double) npxs[s] / ngrp[s] : 0,
       med(grms[s]), med(wrms[s]), nfitw[s], nwin[s], nwin[s] ? 100. * nfitw[s] / nwin[s] : 0);
@@ -1141,7 +1141,7 @@ void nf_digipix(const char *digif = "/home/rog/sPHENIX/3D_ClusterFindingML/islan
   gStyle->SetOptStat(0);
   TCanvas *cv = new TCanvas("cvnfd", "nf digipix", 1500, 620);
   cv->Divide(2, 1);
-  const char *pt[2] = {"GLOBAL whole-track fit", "LOCAL 4-row short-sagitta fit"};
+  const char *pt[2] = {"GLOBAL whole-track fit", "LOCAL 4-layer short-sagitta fit"};
   for (int p = 0; p < 2; ++p)
   {
     cv->cd(p + 1);
